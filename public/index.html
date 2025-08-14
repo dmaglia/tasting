@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chips Tasting Party</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🍟 Chips Tasting Party</h1>
+            <p>Rate chips with 1-5 stars and see live rankings!</p>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="user-setup" id="userSetup">
+                <div class="input-group">
+                    <input type="text" id="usernameInput" placeholder="Enter your name to join..." maxlength="20">
+                    <button id="joinButton" onclick="joinGame()">Join Party</button>
+                </div>
+            </div>
+
+            <div class="game-interface" id="gameInterface" style="display: none;">
+                <nav class="tabs">
+                    <button class="tab active" data-tab="voting">Rate Chips</button>
+                    <button class="tab" data-tab="leaderboard">Leaderboard</button>
+                    <button class="tab" data-tab="admin">Admin</button>
+                </nav>
+
+                <div class="tab-content">
+                    <div id="voting-tab" class="tab-panel active">
+                        <div class="add-chip-section">
+                            <div class="input-group">
+                                <input type="text" id="newChipInput" placeholder="Add new chip flavor..." maxlength="30">
+                                <button onclick="addChip()">Add</button>
+                            </div>
+                        </div>
+
+                        <div class="chips-grid" id="chipsGrid"></div>
+                    </div>
+
+                    <div id="leaderboard-tab" class="tab-panel">
+                        <div class="stats-card">
+                            <div class="stat">
+                                <span class="stat-number" id="chipCount">0</span>
+                                <span class="stat-label">Chip Flavors</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="voteCount">0</span>
+                                <span class="stat-label">Total Votes</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="userCount">0</span>
+                                <span class="stat-label">Active Users</span>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="leaderboardChart"></canvas>
+                        </div>
+
+                        <div class="rankings-grid">
+                            <div class="ranking-card">
+                                <h3>🏆 Overall Champion</h3>
+                                <div id="overallRanking"></div>
+                            </div>
+                            <div class="ranking-card">
+                                <h3>😋 Best Taste</h3>
+                                <div id="tasteRanking"></div>
+                            </div>
+                            <div class="ranking-card">
+                                <h3>👀 Best Looks</h3>
+                                <div id="appearanceRanking"></div>
+                            </div>
+                            <div class="ranking-card">
+                                <h3>🤤 Best Feel</h3>
+                                <div id="mouthfeelRanking"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="admin-tab" class="tab-panel">
+                        <div class="admin-panel">
+                            <h3>Admin Controls</h3>
+                            <p>Use these controls to manage the tasting session</p>
+
+                            <div class="admin-section">
+                                <h4>Reset Game</h4>
+                                <p>This will clear all votes and reset chip list to defaults</p>
+                                <div class="input-group">
+                                    <input type="password" id="adminSecret" placeholder="Enter admin password...">
+                                    <button onclick="resetGame()" class="danger-btn">Reset Everything</button>
+                                </div>
+                            </div>
+
+                            <div class="admin-section">
+                                <h4>Current Data</h4>
+                                <div class="data-display" id="adminDataDisplay"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,424 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #fafafa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+.header {
+    background: white;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+    position: relative;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.header p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: #f8f8f8;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ccc;
+    transition: background 0.3s;
+}
+
+.status-dot.connected {
+    background: #22c55e;
+}
+
+.status-dot.disconnected {
+    background: #ef4444;
+}
+
+.main-content {
+    padding: 2rem 1.5rem;
+}
+
+.user-setup {
+    text-align: center;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e5e5;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #dc2626;
+}
+
+button {
+    padding: 0.75rem 1.5rem;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    white-space: nowrap;
+}
+
+button:hover {
+    background: #b91c1c;
+}
+
+button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.danger-btn {
+    background: #ef4444;
+}
+
+.danger-btn:hover {
+    background: #dc2626;
+}
+
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    flex: 1;
+    padding: 1rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.tab.active {
+    color: #dc2626;
+    border-bottom-color: #dc2626;
+}
+
+.tab:hover {
+    color: #dc2626;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+.add-chip-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border-left: 4px solid #dc2626;
+}
+
+.chips-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.chip-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: box-shadow 0.3s;
+}
+
+.chip-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.chip-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+    text-align: center;
+}
+
+.criteria-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.criterion {
+    text-align: center;
+}
+
+.criterion-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.star {
+    font-size: 1.5rem;
+    color: #e5e5e5;
+    cursor: pointer;
+    transition: color 0.2s;
+    user-select: none;
+}
+
+.star.filled {
+    color: #fbbf24;
+}
+
+.star:hover {
+    color: #f59e0b;
+}
+
+.stats-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #dc2626;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.chart-container {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    height: 400px;
+}
+
+.rankings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.ranking-card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.ranking-card h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.rank-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid #e5e5e5;
+}
+
+.rank-item:first-child {
+    border-left-color: #fbbf24;
+    background: #fffbeb;
+}
+
+.rank-item:nth-child(2) {
+    border-left-color: #94a3b8;
+    background: #f8fafc;
+}
+
+.rank-item:nth-child(3) {
+    border-left-color: #cd7f32;
+    background: #fefdf8;
+}
+
+.rank-position {
+    font-weight: bold;
+    margin-right: 0.75rem;
+    color: #666;
+    min-width: 1.5rem;
+}
+
+.rank-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.rank-score {
+    font-weight: bold;
+    color: #dc2626;
+}
+
+.admin-panel {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.admin-panel h3 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.admin-panel p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.admin-section {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-section h4 {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.admin-section p {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.data-display {
+    background: #f9f9f9;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 1rem;
+    font-family: monospace;
+    font-size: 0.9rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.no-data {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 2rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        box-shadow: none;
+    }
+
+    .header {
+        padding: 1.5rem 1rem;
+    }
+
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .main-content {
+        padding: 1.5rem 1rem;
+    }
+
+    .criteria-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .stats-card {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .rankings-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tabs {
+        overflow-x: auto;
+    }
+
+    .tab {
+        min-width: 120px;
+    }
+}
