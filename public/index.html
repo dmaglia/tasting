@@ -12,14 +12,24 @@
     <div class="container">
         <header class="header">
             <div class="welcome-banner">
+                <div class="badge-container">
+                    <div class="vibe-badge">
+                        <span class="badge-text">100% Vibe coded with Claude</span>
+                        <span class="badge-icon">✨</span>
+                    </div>
+                </div>
                 <h1>🥔 Welcome to Chati's & Dominik's 🥔</h1>
                 <h2>Chips Tasting Party</h2>
-                <p>You're invited to our exclusive blind tasting experience!</p>
                 <p>Rate each mystery chip sample and help us crown the ultimate champion 🏆</p>
             </div>
-            <div class="connection-status" id="connectionStatus">
-                <span class="status-dot"></span>
-                <span class="status-text">Connecting...</span>
+            <div class="header-controls">
+                <div class="connection-status" id="connectionStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+                <button class="settings-btn" onclick="toggleAdminPanel()" title="Admin Settings">
+                    ⚙️
+                </button>
             </div>
         </header>
 
@@ -43,12 +53,11 @@
 
                 <nav class="tabs">
                     <button class="tab active" data-tab="voting">Rate Chips</button>
-                    <button class="tab" data-tab="leaderboard">Leaderboard</button>
+                    <button class="tab" data-tab="leaderboard" id="leaderboardTab">
+                        <span>Leaderboard</span>
+                        <span class="tab-lock" id="leaderboardLock">🔒</span>
+                    </button>
                 </nav>
-
-                <div class="admin-access">
-                    <button class="admin-access-btn" onclick="toggleAdminPanel()">🔐 Admin</button>
-                </div>
 
                 <div class="tab-content">
                     <div id="voting-tab" class="tab-panel active">
@@ -61,41 +70,70 @@
                     </div>
 
                     <div id="leaderboard-tab" class="tab-panel">
-                        <div class="stats-card">
-                            <div class="stat">
-                                <span class="stat-number" id="chipCount">0</span>
-                                <span class="stat-label">Chip Samples</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number" id="voteCount">0</span>
-                                <span class="stat-label">Total Votes</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-number" id="userCount">0</span>
-                                <span class="stat-label">Tasters</span>
+                        <div class="leaderboard-locked" id="leaderboardLocked">
+                            <div class="locked-container">
+                                <div class="locked-icon-big">🎭</div>
+                                <h3>🔒 Leaderboard Locked</h3>
+                                <p>The excitement is building! The leaderboard is currently hidden to keep the tasting completely fair and unbiased.</p>
+                                <p>Once everyone has completed their ratings, the admin will reveal the results for the grand finale! 🎉</p>
+                                <div class="locked-features">
+                                    <div class="feature-item">
+                                        <span class="feature-icon">📊</span>
+                                        <span>Live Rankings</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">🏆</span>
+                                        <span>Champion Reveal</span>
+                                    </div>
+                                    <div class="feature-item">
+                                        <span class="feature-icon">📈</span>
+                                        <span>Interactive Charts</span>
+                                    </div>
+                                </div>
+                                <div class="waiting-message">
+                                    <span class="pulse-dot"></span>
+                                    Waiting for reveal mode...
+                                </div>
                             </div>
                         </div>
 
-                        <div class="chart-container">
-                            <canvas id="leaderboardChart"></canvas>
-                        </div>
+                        <div class="leaderboard-content" id="leaderboardContent" style="display: none;">
+                            <div class="stats-card">
+                                <div class="stat">
+                                    <span class="stat-number" id="chipCount">0</span>
+                                    <span class="stat-label">Chip Samples</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number" id="voteCount">0</span>
+                                    <span class="stat-label">Total Votes</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-number" id="userCount">0</span>
+                                    <span class="stat-label">Tasters</span>
+                                </div>
+                            </div>
 
-                        <div class="rankings-grid">
-                            <div class="ranking-card">
-                                <h3>🏆 Overall Champion</h3>
-                                <div id="overallRanking"></div>
+                            <div class="chart-container">
+                                <canvas id="leaderboardChart"></canvas>
                             </div>
-                            <div class="ranking-card">
-                                <h3>😋 Best Taste</h3>
-                                <div id="tasteRanking"></div>
-                            </div>
-                            <div class="ranking-card">
-                                <h3>👀 Best Looks</h3>
-                                <div id="appearanceRanking"></div>
-                            </div>
-                            <div class="ranking-card">
-                                <h3>🤤 Best Mouthfeel</h3>
-                                <div id="mouthfeelRanking"></div>
+
+                            <div class="rankings-grid">
+                                <div class="ranking-card">
+                                    <h3>🏆 Overall Champion</h3>
+                                    <div id="overallRanking"></div>
+                                </div>
+                                <div class="ranking-card">
+                                    <h3>😋 Best Taste</h3>
+                                    <div id="tasteRanking"></div>
+                                </div>
+                                <div class="ranking-card">
+                                    <h3>👀 Best Looks</h3>
+                                    <div id="appearanceRanking"></div>
+                                </div>
+                                <div class="ranking-card">
+                                    <h3>🤤 Best Mouthfeel</h3>
+                                    <div id="mouthfeelRanking"></div>
+                                </div>
                             </div>
                         </div>
                     </div>

@@ -16,15 +16,57 @@ body {
     margin: 0 auto;
     min-height: 100vh;
     background: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
 .header {
     background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    padding: 3rem 1.5rem 2rem;
-    text-align: center;
+    padding: 2rem 1.5rem;
     color: white;
     position: relative;
+}
+
+.badge-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.vibe-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+}
+
+.badge-text {
+    opacity: 0.9;
+}
+
+.badge-icon {
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.1); }
+}
+
+.welcome-banner {
+    text-align: center;
+    margin-bottom: 1.5rem;
 }
 
 .welcome-banner h1 {
@@ -50,12 +92,19 @@ body {
     margin-bottom: 1.5rem;
 }
 
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
 .connection-status {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255,255,255,0.2);
     border-radius: 20px;
     font-size: 0.9rem;
     backdrop-filter: blur(10px);
@@ -65,7 +114,7 @@ body {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(255,255,255,0.5);
     transition: background 0.3s;
 }
 
@@ -75,6 +124,28 @@ body {
 
 .status-dot.disconnected {
     background: #ef4444;
+}
+
+.settings-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: background 0.3s;
+    backdrop-filter: blur(10px);
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-btn:hover {
+    background: rgba(255,255,255,0.3);
+    transform: none;
 }
 
 .main-content {
@@ -199,6 +270,11 @@ button:disabled {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 .tab:hover {
@@ -212,112 +288,19 @@ button:disabled {
     border-bottom-color: #dc2626;
 }
 
-.admin-access {
-    text-align: center;
-    margin-bottom: 2rem;
+.tab.disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
 }
 
-.admin-access-btn {
-    background: #6b7280;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: background 0.3s;
+.tab.disabled:hover {
+    background: #fafafa;
+    color: #9ca3af;
 }
 
-.admin-access-btn:hover {
-    background: #4b5563;
-}
-
-.admin-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-}
-
-.admin-modal {
-    background: white;
-    border-radius: 16px;
-    max-width: 600px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-.admin-panel-content {
-    padding: 2rem;
-}
-
-.close-admin {
-    background: #6b7280;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-
-.close-admin:hover {
-    background: #4b5563;
-}
-
-.admin-header .close-admin {
-    margin-top: 0;
-}
-
-.chips-management {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #f9f9f9;
-    border-radius: 8px;
-}
-
-.chip-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    background: white;
-    border-radius: 8px;
-    border: 1px solid #e5e5e5;
-}
-
-.chip-item:last-child {
-    margin-bottom: 0;
-}
-
-.chip-item-name {
-    font-weight: 500;
-    color: #333;
-}
-
-.remove-chip-btn {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    cursor: pointer;
+.tab-lock {
     font-size: 0.8rem;
-}
-
-.remove-chip-btn:hover {
-    background: #dc2626;
+    opacity: 0.7;
 }
 
 .tab-panel {
@@ -360,7 +343,7 @@ button:disabled {
 }
 
 .chip-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     border-color: #e5e5e5;
 }
 
@@ -427,6 +410,123 @@ button:disabled {
 
 .star:active {
     transform: scale(0.95);
+}
+
+.completion-indicator {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: #22c55e;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.leaderboard-locked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 500px;
+    padding: 2rem;
+}
+
+.locked-container {
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.locked-icon-big {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.05); opacity: 1; }
+}
+
+.locked-container h3 {
+    color: #495057;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.locked-container p {
+    color: #6c757d;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.locked-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    backdrop-filter: blur(5px);
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.feature-item span:last-child {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 500;
+}
+
+.waiting-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(220, 38, 38, 0.1);
+    border-radius: 12px;
+    color: #dc2626;
+    font-weight: 500;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #dc2626;
+    border-radius: 50%;
+    animation: pulse-dot 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
 }
 
 .stats-card {
@@ -527,11 +627,28 @@ button:disabled {
     color: #dc2626;
 }
 
-.admin-login {
+.admin-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 300px;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.admin-modal {
+    background: white;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
 .admin-login-card {
@@ -554,6 +671,10 @@ button:disabled {
     margin-bottom: 1.5rem;
 }
 
+.admin-panel-content {
+    padding: 2rem;
+}
+
 .admin-header {
     display: flex;
     justify-content: space-between;
@@ -566,6 +687,25 @@ button:disabled {
 .admin-header h3 {
     color: #dc2626;
     font-size: 1.5rem;
+}
+
+.close-admin {
+    background: #6b7280;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.close-admin:hover {
+    background: #4b5563;
+}
+
+.admin-header .close-admin {
+    margin-top: 0;
 }
 
 .admin-section {
@@ -588,6 +728,47 @@ button:disabled {
     color: #666;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+}
+
+.chips-management {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.chip-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e5e5;
+}
+
+.chip-item:last-child {
+    margin-bottom: 0;
+}
+
+.chip-item-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.remove-chip-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.remove-chip-btn:hover {
+    background: #dc2626;
 }
 
 .reveal-controls {
@@ -640,22 +821,6 @@ button:disabled {
     padding: 2rem;
 }
 
-.completion-indicator {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: #22c55e;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-}
-
 @media (max-width: 768px) {
     .container {
         box-shadow: none;
@@ -663,6 +828,26 @@ button:disabled {
 
     .header {
         padding: 1.5rem 1rem;
+    }
+
+    .badge-container {
+        margin-bottom: 1rem;
+    }
+
+    .vibe-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .header-controls {
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .welcome-banner {
+        text-align: center;
+        margin-bottom: 1rem;
     }
 
     .welcome-banner h1 {
@@ -755,6 +940,12 @@ button:disabled {
         gap: 0.75rem;
     }
 
+    .admin-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
     .admin-overlay {
         padding: 0.5rem;
     }
@@ -784,8 +975,28 @@ button:disabled {
         width: auto;
     }
 
-    .admin-section {
+    .locked-container {
+        padding: 2rem 1.5rem;
+    }
+
+    .locked-container h3 {
+        font-size: 1.5rem;
+    }
+
+    .locked-features {
+        grid-template-columns: 1fr;
+        gap: 1rem;
         padding: 1rem;
+    }
+
+    .feature-item {
+        flex-direction: row;
+        justify-content: center;
+        text-align: left;
+    }
+
+    .feature-icon {
+        font-size: 1.25rem;
     }
 
     .chip-card {
