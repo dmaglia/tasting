@@ -9,197 +9,197 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <div class="welcome-banner">
-                <div class="badge-container">
-                    <div class="vibe-badge">
-                        <span class="badge-text">100% Vibe coded with Claude</span>
-                        <span class="badge-icon">✨</span>
-                    </div>
+<div class="container">
+    <header class="header">
+        <div class="welcome-banner">
+            <div class="badge-container">
+                <div class="vibe-badge">
+                    <span class="badge-text">100% Vibe coded with Claude</span>
+                    <span class="badge-icon">✨</span>
                 </div>
-                <h1>🥔 Welcome to Chati's & Dominik's 🥔</h1>
-                <h2>Chips Tasting Party</h2>
-                <p>Rate each mystery chip sample and help us crown the ultimate champion 🏆</p>
             </div>
-            <div class="header-controls">
-                <div class="connection-status" id="connectionStatus">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Connecting...</span>
-                </div>
-                <button class="settings-btn" onclick="toggleAdminPanel()" title="Admin Settings">
-                    ⚙️
+            <h1>🥔 Welcome to Chati's & Dominik's 🥔</h1>
+            <h2>Chips Tasting Party</h2>
+            <p>Rate each mystery chip sample and help us crown the ultimate champion 🏆</p>
+        </div>
+        <div class="header-controls">
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot"></span>
+                <span class="status-text">Connecting...</span>
+            </div>
+            <button class="settings-btn" onclick="toggleAdminPanel()" title="Admin Settings">
+                ⚙️
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="user-setup" id="userSetup">
+            <div class="welcome-message">
+                <h3>🎉 Ready to join the fun?</h3>
+                <p>Enter your name to start rating our mystery chip samples!</p>
+            </div>
+            <div class="input-group">
+                <input type="text" id="usernameInput" placeholder="Enter your name to join..." maxlength="20">
+                <button id="joinButton" onclick="joinGame()">Join the Tasting!</button>
+            </div>
+        </div>
+
+        <div class="game-interface" id="gameInterface" style="display: none;">
+            <div class="user-info">
+                <span class="user-greeting">Hey <strong id="currentUsername"></strong>! 👋</span>
+                <button class="logout-btn" onclick="logout()">Switch User</button>
+            </div>
+
+            <nav class="tabs">
+                <button class="tab active" data-tab="voting">Rate Chips</button>
+                <button class="tab" data-tab="leaderboard" id="leaderboardTab">
+                    <span>Leaderboard</span>
+                    <span class="tab-lock" id="leaderboardLock">🔒</span>
                 </button>
-            </div>
-        </header>
+            </nav>
 
-        <main class="main-content">
-            <div class="user-setup" id="userSetup">
-                <div class="welcome-message">
-                    <h3>🎉 Ready to join the fun?</h3>
-                    <p>Enter your name to start rating our mystery chip samples!</p>
-                </div>
-                <div class="input-group">
-                    <input type="text" id="usernameInput" placeholder="Enter your name to join..." maxlength="20">
-                    <button id="joinButton" onclick="joinGame()">Join the Tasting!</button>
-                </div>
-            </div>
-
-            <div class="game-interface" id="gameInterface" style="display: none;">
-                <div class="user-info">
-                    <span class="user-greeting">Hey <strong id="currentUsername"></strong>! 👋</span>
-                    <button class="logout-btn" onclick="logout()">Switch User</button>
-                </div>
-
-                <nav class="tabs">
-                    <button class="tab active" data-tab="voting">Rate Chips</button>
-                    <button class="tab" data-tab="leaderboard" id="leaderboardTab">
-                        <span>Leaderboard</span>
-                        <span class="tab-lock" id="leaderboardLock">🔒</span>
-                    </button>
-                </nav>
-
-                <div class="tab-content">
-                    <div id="voting-tab" class="tab-panel active">
-                        <div class="tasting-instructions">
-                            <h3>🥔 Blind Tasting Instructions</h3>
-                            <p>Each chip sample is numbered to keep the tasting fair and unbiased. Rate each one honestly!</p>
-                        </div>
-
-                        <div class="chips-grid" id="chipsGrid"></div>
+            <div class="tab-content">
+                <div id="voting-tab" class="tab-panel active">
+                    <div class="tasting-instructions">
+                        <h3>🥔 Blind Tasting Instructions</h3>
+                        <p>Each chip sample is numbered to keep the tasting fair and unbiased. Rate each one honestly!</p>
                     </div>
 
-                    <div id="leaderboard-tab" class="tab-panel">
-                        <div class="leaderboard-locked" id="leaderboardLocked">
-                            <div class="locked-container">
-                                <div class="locked-icon-big">🎭</div>
-                                <h3>🔒 Leaderboard Locked</h3>
-                                <p>The excitement is building! The leaderboard is currently hidden to keep the tasting completely fair and unbiased.</p>
-                                <p>Once everyone has completed their ratings, the admin will reveal the results for the grand finale! 🎉</p>
-                                <div class="locked-features">
-                                    <div class="feature-item">
-                                        <span class="feature-icon">📊</span>
-                                        <span>Live Rankings</span>
-                                    </div>
-                                    <div class="feature-item">
-                                        <span class="feature-icon">🏆</span>
-                                        <span>Champion Reveal</span>
-                                    </div>
-                                    <div class="feature-item">
-                                        <span class="feature-icon">📈</span>
-                                        <span>Interactive Charts</span>
-                                    </div>
+                    <div class="chips-grid" id="chipsGrid"></div>
+                </div>
+
+                <div id="leaderboard-tab" class="tab-panel">
+                    <div class="leaderboard-locked" id="leaderboardLocked">
+                        <div class="locked-container">
+                            <div class="locked-icon-big">🎭</div>
+                            <h3>🔒 Leaderboard Locked</h3>
+                            <p>The excitement is building! The leaderboard is currently hidden to keep the tasting completely fair and unbiased.</p>
+                            <p>Once everyone has completed their ratings, the admin will reveal the results for the grand finale! 🎉</p>
+                            <div class="locked-features">
+                                <div class="feature-item">
+                                    <span class="feature-icon">📊</span>
+                                    <span>Live Rankings</span>
                                 </div>
-                                <div class="waiting-message">
-                                    <span class="pulse-dot"></span>
-                                    Waiting for reveal mode...
+                                <div class="feature-item">
+                                    <span class="feature-icon">🏆</span>
+                                    <span>Champion Reveal</span>
+                                </div>
+                                <div class="feature-item">
+                                    <span class="feature-icon">📈</span>
+                                    <span>Interactive Charts</span>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="leaderboard-content" id="leaderboardContent" style="display: none;">
-                            <div class="stats-card">
-                                <div class="stat">
-                                    <span class="stat-number" id="chipCount">0</span>
-                                    <span class="stat-label">Chip Samples</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-number" id="voteCount">0</span>
-                                    <span class="stat-label">Total Votes</span>
-                                </div>
-                                <div class="stat">
-                                    <span class="stat-number" id="userCount">0</span>
-                                    <span class="stat-label">Tasters</span>
-                                </div>
-                            </div>
-
-                            <div class="chart-container">
-                                <canvas id="leaderboardChart"></canvas>
-                            </div>
-
-                            <div class="rankings-grid">
-                                <div class="ranking-card">
-                                    <h3>🏆 Overall Champion</h3>
-                                    <div id="overallRanking"></div>
-                                </div>
-                                <div class="ranking-card">
-                                    <h3>😋 Best Taste</h3>
-                                    <div id="tasteRanking"></div>
-                                </div>
-                                <div class="ranking-card">
-                                    <h3>👀 Best Looks</h3>
-                                    <div id="appearanceRanking"></div>
-                                </div>
-                                <div class="ranking-card">
-                                    <h3>🤤 Best Mouthfeel</h3>
-                                    <div id="mouthfeelRanking"></div>
-                                </div>
+                            <div class="waiting-message">
+                                <span class="pulse-dot"></span>
+                                Waiting for reveal mode...
                             </div>
                         </div>
                     </div>
 
-                    <div id="admin-panel" class="admin-overlay" style="display: none;">
-                        <div class="admin-modal">
-                            <div class="admin-login" id="adminLogin">
-                                <div class="admin-login-card">
-                                    <h3>🔐 Admin Access</h3>
-                                    <p>Enter the admin password to access party controls</p>
-                                    <div class="input-group">
-                                        <input type="password" id="adminPassword" placeholder="Admin password...">
-                                        <button onclick="adminLogin()">Login</button>
-                                    </div>
-                                    <button class="close-admin" onclick="closeAdminPanel()">✕ Close</button>
+                    <div class="leaderboard-content" id="leaderboardContent" style="display: none;">
+                        <div class="stats-card">
+                            <div class="stat">
+                                <span class="stat-number" id="chipCount">0</span>
+                                <span class="stat-label">Chip Samples</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="voteCount">0</span>
+                                <span class="stat-label">Total Votes</span>
+                            </div>
+                            <div class="stat">
+                                <span class="stat-number" id="userCount">0</span>
+                                <span class="stat-label">Tasters</span>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <canvas id="leaderboardChart"></canvas>
+                        </div>
+
+                        <div class="rankings-grid">
+                            <div class="ranking-card">
+                                <h3>🏆 Overall Champion</h3>
+                                <div id="overallRanking"></div>
+                            </div>
+                            <div class="ranking-card">
+                                <h3>😋 Best Taste</h3>
+                                <div id="tasteRanking"></div>
+                            </div>
+                            <div class="ranking-card">
+                                <h3>👀 Best Looks</h3>
+                                <div id="appearanceRanking"></div>
+                            </div>
+                            <div class="ranking-card">
+                                <h3>🤤 Best Mouthfeel</h3>
+                                <div id="mouthfeelRanking"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="admin-panel" class="admin-overlay" style="display: none;">
+                    <div class="admin-modal">
+                        <div class="admin-login" id="adminLogin">
+                            <div class="admin-login-card">
+                                <h3>🔐 Admin Access</h3>
+                                <p>Enter the admin password to access party controls</p>
+                                <div class="input-group">
+                                    <input type="password" id="adminPassword" placeholder="Admin password...">
+                                    <button onclick="adminLogin()">Login</button>
+                                </div>
+                                <button class="close-admin" onclick="closeAdminPanel()">✕ Close</button>
+                            </div>
+                        </div>
+
+                        <div class="admin-panel-content" id="adminPanelContent" style="display: none;">
+                            <div class="admin-header">
+                                <h3>🎛️ Party Control Center</h3>
+                                <button onclick="closeAdminPanel()" class="close-admin">✕ Close</button>
+                            </div>
+
+                            <div class="admin-section">
+                                <h4>🥔 Manage Chip Samples</h4>
+                                <p>Add new chip flavors or remove existing ones</p>
+                                <div class="input-group">
+                                    <input type="text" id="newChipInput" placeholder="Chip flavor name..." maxlength="30">
+                                    <button onclick="addChip()">Add Sample</button>
+                                </div>
+
+                                <div class="chips-management" id="chipsManagement">
+                                    <!-- Chips list will be populated here -->
                                 </div>
                             </div>
 
-                            <div class="admin-panel-content" id="adminPanelContent" style="display: none;">
-                                <div class="admin-header">
-                                    <h3>🎛️ Party Control Center</h3>
-                                    <button onclick="closeAdminPanel()" class="close-admin">✕ Close</button>
+                            <div class="admin-section">
+                                <h4>👁️ Reveal Mode</h4>
+                                <p>Toggle between numbered samples and real chip names</p>
+                                <div class="reveal-controls">
+                                    <button id="revealToggle" onclick="toggleReveal()" class="reveal-btn">
+                                        <span id="revealText">🎭 Reveal Names</span>
+                                    </button>
+                                    <span class="reveal-status" id="revealStatus">Currently: Blind Mode</span>
                                 </div>
+                            </div>
 
-                                <div class="admin-section">
-                                    <h4>🥔 Manage Chip Samples</h4>
-                                    <p>Add new chip flavors or remove existing ones</p>
-                                    <div class="input-group">
-                                        <input type="text" id="newChipInput" placeholder="Chip flavor name..." maxlength="30">
-                                        <button onclick="addChip()">Add Sample</button>
-                                    </div>
+                            <div class="admin-section">
+                                <h4>🔄 Reset Party</h4>
+                                <p>Clear all votes and reset to start fresh</p>
+                                <button onclick="resetGame()" class="danger-btn">Reset Everything</button>
+                            </div>
 
-                                    <div class="chips-management" id="chipsManagement">
-                                        <!-- Chips list will be populated here -->
-                                    </div>
-                                </div>
-
-                                <div class="admin-section">
-                                    <h4>👁️ Reveal Mode</h4>
-                                    <p>Toggle between numbered samples and real chip names</p>
-                                    <div class="reveal-controls">
-                                        <button id="revealToggle" onclick="toggleReveal()" class="reveal-btn">
-                                            <span id="revealText">🎭 Reveal Names</span>
-                                        </button>
-                                        <span class="reveal-status" id="revealStatus">Currently: Blind Mode</span>
-                                    </div>
-                                </div>
-
-                                <div class="admin-section">
-                                    <h4>🔄 Reset Party</h4>
-                                    <p>Clear all votes and reset to start fresh</p>
-                                    <button onclick="resetGame()" class="danger-btn">Reset Everything</button>
-                                </div>
-
-                                <div class="admin-section">
-                                    <h4>📊 Current Data</h4>
-                                    <div class="data-display" id="adminDataDisplay"></div>
-                                </div>
+                            <div class="admin-section">
+                                <h4>📊 Current Data</h4>
+                                <div class="data-display" id="adminDataDisplay"></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+</div>
 
-    <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

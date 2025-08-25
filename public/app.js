@@ -1,137 +1,137 @@
 class ChipsTastingApp {
     constructor() {
-        this.socket = io();
-        this.username = '';
-        this.gameData = { chips: [], votes: {} };
-        this.chart = null;
-        this.isAdmin = false;
-        this.revealMode = false;
+        this.socket = io()
+        this.username = ''
+        this.gameData = {chips: [], votes: {}}
+        this.chart = null
+        this.isAdmin = false
+        this.revealMode = false
 
-        this.loadUserSession();
-        this.setupSocketListeners();
-        this.setupEventListeners();
+        this.loadUserSession()
+        this.setupSocketListeners()
+        this.setupEventListeners()
     }
 
     setupSocketListeners() {
         this.socket.on('connect', () => {
-            this.updateConnectionStatus(true);
+            this.updateConnectionStatus(true)
             if (this.username) {
-                this.socket.emit('joinGame', this.username);
+                this.socket.emit('joinGame', this.username)
             }
-        });
+        })
 
         this.socket.on('disconnect', () => {
-            this.updateConnectionStatus(false);
-        });
+            this.updateConnectionStatus(false)
+        })
 
         this.socket.on('gameData', (data) => {
-            this.gameData = data;
-            this.renderChips();
-            this.updateLeaderboard();
-            this.updateAdminData();
-        });
+            this.gameData = data
+            this.renderChips()
+            this.updateLeaderboard()
+            this.updateAdminData()
+        })
 
         this.socket.on('userUpdate', (users) => {
-            document.getElementById('userCount').textContent = users.length;
-        });
+            document.getElementById('userCount').textContent = users.length
+        })
 
         this.socket.on('adminMessage', (message) => {
-            alert(message);
-        });
+            alert(message)
+        })
 
         this.socket.on('revealModeUpdate', (revealMode) => {
-            this.revealMode = revealMode;
-            this.updateRevealButton();
-            this.updateLeaderboardAccess();
-            this.renderChips();
-            this.updateLeaderboard();
-        });
+            this.revealMode = revealMode
+            this.updateRevealButton()
+            this.updateLeaderboardAccess()
+            this.renderChips()
+            this.updateLeaderboard()
+        })
     }
 
     setupEventListeners() {
         // Tab switching
         document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
-        });
+            tab.addEventListener('click', () => this.switchTab(tab.dataset.tab))
+        })
 
         // Enter key handlers
         document.getElementById('usernameInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.joinGame();
-        });
+            if (e.key === 'Enter') this.joinGame()
+        })
 
         document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.adminLogin();
-        });
+            if (e.key === 'Enter') this.adminLogin()
+        })
 
         document.getElementById('newChipInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.addChip();
-        });
+            if (e.key === 'Enter') this.addChip()
+        })
     }
 
     loadUserSession() {
-        const savedUser = localStorage.getItem('chips-tasting-user');
+        const savedUser = localStorage.getItem('chips-tasting-user')
         if (savedUser) {
-            this.username = savedUser;
-            document.getElementById('userSetup').style.display = 'none';
-            document.getElementById('gameInterface').style.display = 'block';
-            document.getElementById('currentUsername').textContent = this.username;
+            this.username = savedUser
+            document.getElementById('userSetup').style.display = 'none'
+            document.getElementById('gameInterface').style.display = 'block'
+            document.getElementById('currentUsername').textContent = this.username
         }
 
         // Initialize leaderboard access
-        this.updateLeaderboardAccess();
+        this.updateLeaderboardAccess()
     }
 
     saveUserSession() {
-        localStorage.setItem('chips-tasting-user', this.username);
+        localStorage.setItem('chips-tasting-user', this.username)
     }
 
     updateConnectionStatus(connected) {
-        const dot = document.querySelector('.status-dot');
-        const text = document.querySelector('.status-text');
+        const dot = document.querySelector('.status-dot')
+        const text = document.querySelector('.status-text')
 
         if (connected) {
-            dot.classList.add('connected');
-            dot.classList.remove('disconnected');
-            text.textContent = 'Connected';
+            dot.classList.add('connected')
+            dot.classList.remove('disconnected')
+            text.textContent = 'Connected'
         } else {
-            dot.classList.remove('connected');
-            dot.classList.add('disconnected');
-            text.textContent = 'Disconnected';
+            dot.classList.remove('connected')
+            dot.classList.add('disconnected')
+            text.textContent = 'Disconnected'
         }
     }
 
     joinGame() {
-        const input = document.getElementById('usernameInput');
-        const username = input.value.trim();
+        const input = document.getElementById('usernameInput')
+        const username = input.value.trim()
 
         if (username.length < 2) {
-            alert('Please enter a name with at least 2 characters');
-            return;
+            alert('Please enter a name with at least 2 characters')
+            return
         }
 
-        this.username = username;
-        this.saveUserSession();
-        this.socket.emit('joinGame', username);
+        this.username = username
+        this.saveUserSession()
+        this.socket.emit('joinGame', username)
 
-        document.getElementById('userSetup').style.display = 'none';
-        document.getElementById('gameInterface').style.display = 'block';
-        document.getElementById('currentUsername').textContent = username;
+        document.getElementById('userSetup').style.display = 'none'
+        document.getElementById('gameInterface').style.display = 'block'
+        document.getElementById('currentUsername').textContent = username
     }
 
     logout() {
         if (confirm('Are you sure you want to switch users? Your session will be cleared.')) {
-            localStorage.removeItem('chips-tasting-user');
-            this.username = '';
-            this.isAdmin = false;
+            localStorage.removeItem('chips-tasting-user')
+            this.username = ''
+            this.isAdmin = false
 
-            document.getElementById('userSetup').style.display = 'block';
-            document.getElementById('gameInterface').style.display = 'none';
-            document.getElementById('usernameInput').value = '';
+            document.getElementById('userSetup').style.display = 'block'
+            document.getElementById('gameInterface').style.display = 'none'
+            document.getElementById('usernameInput').value = ''
 
             // Reset admin state
-            document.getElementById('adminLogin').style.display = 'block';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminLogin').style.display = 'block'
+            document.getElementById('adminPanel').style.display = 'none'
+            document.getElementById('adminPassword').value = ''
         }
     }
 
@@ -139,103 +139,103 @@ class ChipsTastingApp {
         // Check if leaderboard is accessible
         if (tabName === 'leaderboard' && !this.revealMode) {
             // Show locked state but still switch tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
 
-            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            return;
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active')
+            document.getElementById(`${tabName}-tab`).classList.add('active')
+            return
         }
 
         // Only handle voting and leaderboard tabs now
-        if (tabName !== 'voting' && tabName !== 'leaderboard') return;
+        if (tabName !== 'voting' && tabName !== 'leaderboard') return
 
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
 
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-        document.getElementById(`${tabName}-tab`).classList.add('active');
+        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active')
+        document.getElementById(`${tabName}-tab`).classList.add('active')
 
         if (tabName === 'leaderboard' && this.revealMode) {
-            setTimeout(() => this.updateChart(), 100);
+            setTimeout(() => this.updateChart(), 100)
         }
     }
 
     updateLeaderboardAccess() {
-        const leaderboardTab = document.getElementById('leaderboardTab');
-        const leaderboardLock = document.getElementById('leaderboardLock');
-        const leaderboardLocked = document.getElementById('leaderboardLocked');
-        const leaderboardContent = document.getElementById('leaderboardContent');
+        const leaderboardTab = document.getElementById('leaderboardTab')
+        const leaderboardLock = document.getElementById('leaderboardLock')
+        const leaderboardLocked = document.getElementById('leaderboardLocked')
+        const leaderboardContent = document.getElementById('leaderboardContent')
 
         if (this.revealMode) {
             // Unlock leaderboard
-            leaderboardTab.classList.remove('disabled');
-            leaderboardLock.style.display = 'none';
-            leaderboardLocked.style.display = 'none';
-            leaderboardContent.style.display = 'block';
+            leaderboardTab.classList.remove('disabled')
+            leaderboardLock.style.display = 'none'
+            leaderboardLocked.style.display = 'none'
+            leaderboardContent.style.display = 'block'
         } else {
             // Lock leaderboard
-            leaderboardTab.classList.add('disabled');
-            leaderboardLock.style.display = 'inline';
-            leaderboardLocked.style.display = 'flex';
-            leaderboardContent.style.display = 'none';
+            leaderboardTab.classList.add('disabled')
+            leaderboardLock.style.display = 'inline'
+            leaderboardLocked.style.display = 'flex'
+            leaderboardContent.style.display = 'none'
         }
     }
 
     toggleAdminPanel() {
-        const panel = document.getElementById('admin-panel');
-        panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+        const panel = document.getElementById('admin-panel')
+        panel.style.display = panel.style.display === 'none' ? 'flex' : 'none'
 
         if (panel.style.display === 'flex') {
-            this.renderChipsManagement();
+            this.renderChipsManagement()
         }
     }
 
     closeAdminPanel() {
-        document.getElementById('admin-panel').style.display = 'none';
-        this.adminLogout();
+        document.getElementById('admin-panel').style.display = 'none'
+        this.adminLogout()
     }
 
     adminLogin() {
-        const password = document.getElementById('adminPassword').value;
+        const password = document.getElementById('adminPassword').value
 
         if (!password) {
-            alert('Please enter the admin password');
-            return;
+            alert('Please enter the admin password')
+            return
         }
 
         // Send password to server for verification
         this.socket.emit('adminLogin', password, (success) => {
             if (success) {
-                this.isAdmin = true;
-                document.getElementById('adminLogin').style.display = 'none';
-                document.getElementById('adminPanelContent').style.display = 'block';
-                this.updateAdminData();
-                this.updateRevealButton();
-                this.renderChipsManagement();
+                this.isAdmin = true
+                document.getElementById('adminLogin').style.display = 'none'
+                document.getElementById('adminPanelContent').style.display = 'block'
+                this.updateAdminData()
+                this.updateRevealButton()
+                this.renderChipsManagement()
             } else {
-                alert('Invalid admin password');
-                document.getElementById('adminPassword').value = '';
+                alert('Invalid admin password')
+                document.getElementById('adminPassword').value = ''
             }
-        });
+        })
     }
 
     adminLogout() {
-        this.isAdmin = false;
-        document.getElementById('adminLogin').style.display = 'block';
-        document.getElementById('adminPanelContent').style.display = 'none';
-        document.getElementById('adminPassword').value = '';
+        this.isAdmin = false
+        document.getElementById('adminLogin').style.display = 'block'
+        document.getElementById('adminPanelContent').style.display = 'none'
+        document.getElementById('adminPassword').value = ''
     }
 
     renderChipsManagement() {
-        if (!this.isAdmin) return;
+        if (!this.isAdmin) return
 
-        const container = document.getElementById('chipsManagement');
-        if (!container) return;
+        const container = document.getElementById('chipsManagement')
+        if (!container) return
 
         if (this.gameData.chips.length === 0) {
-            container.innerHTML = '<p class="no-data">No chips added yet</p>';
-            return;
+            container.innerHTML = '<p class="no-data">No chips added yet</p>'
+            return
         }
 
         container.innerHTML = `
@@ -246,90 +246,90 @@ class ChipsTastingApp {
                     <button class="remove-chip-btn" onclick="removeChip('${chip}')">Remove</button>
                 </div>
             `).join('')}
-        `;
+        `
     }
 
     removeChip(chipName) {
         if (!this.isAdmin) {
-            alert('Only admins can remove chip samples');
-            return;
+            alert('Only admins can remove chip samples')
+            return
         }
 
         if (confirm(`Are you sure you want to remove "${chipName}"? This will also delete all votes for this chip.`)) {
-            this.socket.emit('removeChip', chipName);
+            this.socket.emit('removeChip', chipName)
         }
     }
 
     addChip() {
         if (!this.isAdmin) {
-            alert('Only admins can add new chip samples');
-            return;
+            alert('Only admins can add new chip samples')
+            return
         }
 
-        const input = document.getElementById('newChipInput');
-        const chipName = input.value.trim();
+        const input = document.getElementById('newChipInput')
+        const chipName = input.value.trim()
 
         if (chipName.length < 2) {
-            alert('Please enter a chip name with at least 2 characters');
-            return;
+            alert('Please enter a chip name with at least 2 characters')
+            return
         }
 
         if (this.gameData.chips.includes(chipName)) {
-            alert('This chip flavor already exists!');
-            return;
+            alert('This chip flavor already exists!')
+            return
         }
 
-        this.socket.emit('addChip', chipName);
-        input.value = '';
+        this.socket.emit('addChip', chipName)
+        input.value = ''
     }
 
     toggleReveal() {
-        if (!this.isAdmin) return;
+        if (!this.isAdmin) return
 
-        this.socket.emit('toggleReveal', !this.revealMode);
+        this.socket.emit('toggleReveal', !this.revealMode)
     }
 
     updateRevealButton() {
-        const button = document.getElementById('revealToggle');
-        const text = document.getElementById('revealText');
-        const status = document.getElementById('revealStatus');
+        const button = document.getElementById('revealToggle')
+        const text = document.getElementById('revealText')
+        const status = document.getElementById('revealStatus')
 
-        if (!button || !text || !status) return;
+        if (!button || !text || !status) return
 
         if (this.revealMode) {
-            button.classList.add('active');
-            text.textContent = '🎭 Hide Names';
-            status.textContent = 'Currently: Names Revealed';
+            button.classList.add('active')
+            text.textContent = '🎭 Hide Names'
+            status.textContent = 'Currently: Names Revealed'
         } else {
-            button.classList.remove('active');
-            text.textContent = '🎭 Reveal Names';
-            status.textContent = 'Currently: Blind Mode';
+            button.classList.remove('active')
+            text.textContent = '🎭 Reveal Names'
+            status.textContent = 'Currently: Blind Mode'
         }
     }
 
     getChipDisplayName(chip, index) {
         // If we're in admin panel and logged in as admin, always show real names
         if (this.isAdmin && document.querySelector('.admin-panel')?.style.display !== 'none') {
-            return chip;
+            return chip
         }
         // For regular users, follow reveal mode
         if (this.revealMode) {
-            return chip;
+            return chip
         }
-        return `Sample #${index + 1}`;
+        return `Sample #${index + 1}`
     }
 
     renderChips() {
-        const container = document.getElementById('chipsGrid');
+        const container = document.getElementById('chipsGrid')
 
         if (this.gameData.chips.length === 0) {
-            container.innerHTML = '<div class="no-data">No chip samples available yet. Admin will add them soon!</div>';
-            return;
+            container.innerHTML = '<div class="no-data">No chip samples available yet. Admin will add them soon!</div>'
+            return
         }
 
         container.innerHTML = this.gameData.chips.map((chip, index) => {
-            const hasUserVoted = this.hasUserVotedForChip(chip);
-            const cardClass = hasUserVoted ? 'chip-card completed' : 'chip-card';
+            const hasUserVoted = this.hasUserVotedForChip(chip)
+            const cardClass = hasUserVoted ? 'chip-card completed' : 'chip-card'
 
             return `
                 <div class="${cardClass}">
@@ -341,67 +341,67 @@ class ChipsTastingApp {
                         ${this.renderCriterion(chip, 'mouthfeel', '🤤 Mouthfeel')}
                     </div>
                 </div>
-            `;
-        }).join('');
+            `
+        }).join('')
 
-        this.setupStarClickHandlers();
-        document.getElementById('chipCount').textContent = this.gameData.chips.length;
+        this.setupStarClickHandlers()
+        document.getElementById('chipCount').textContent = this.gameData.chips.length
     }
 
     hasUserVotedForChip(chip) {
-        const userVotes = this.gameData.votes[this.username]?.[chip];
-        return userVotes && userVotes.taste && userVotes.appearance && userVotes.mouthfeel;
+        const userVotes = this.gameData.votes[this.username]?.[chip]
+        return userVotes && userVotes.taste && userVotes.appearance && userVotes.mouthfeel
     }
 
     renderCriterion(chip, criterion, label) {
-        const userVote = this.getUserVote(chip, criterion);
+        const userVote = this.getUserVote(chip, criterion)
         const stars = Array.from({length: 5}, (_, i) => {
-            const rating = i + 1;
-            let starClass = 'star';
-            let starSymbol = '☆'; // Empty star outline
+            const rating = i + 1
+            let starClass = 'star'
+            let starSymbol = '☆' // Empty star outline
 
             if (userVote > 0) {
                 // User has voted
                 if (rating <= userVote) {
-                    starClass = 'star filled';
-                    starSymbol = '★'; // Filled star
+                    starClass = 'star filled'
+                    starSymbol = '★' // Filled star
                 } else {
-                    starClass = 'star outline';
-                    starSymbol = '☆'; // Outline star in gold color
+                    starClass = 'star outline'
+                    starSymbol = '☆' // Outline star in gold color
                 }
             }
 
-            return `<span class="${starClass}" data-chip="${chip}" data-criterion="${criterion}" data-rating="${rating}">${starSymbol}</span>`;
-        }).join('');
+            return `<span class="${starClass}" data-chip="${chip}" data-criterion="${criterion}" data-rating="${rating}">${starSymbol}</span>`
+        }).join('')
 
         return `
             <div class="criterion">
                 <span class="criterion-label">${label}</span>
                 <div class="star-rating">${stars}</div>
             </div>
-        `;
+        `
     }
 
     setupStarClickHandlers() {
         document.querySelectorAll('.star').forEach(star => {
             star.addEventListener('click', (e) => {
-                const { chip, criterion, rating } = e.target.dataset;
-                this.submitVote(chip, criterion, parseInt(rating));
-            });
+                const {chip, criterion, rating} = e.target.dataset
+                this.submitVote(chip, criterion, parseInt(rating))
+            })
 
             // Simple hover effect - just scale, no color changes
             star.addEventListener('mouseenter', (e) => {
-                e.target.style.transform = 'scale(1.1)';
-            });
+                e.target.style.transform = 'scale(1.1)'
+            })
 
             star.addEventListener('mouseleave', (e) => {
-                e.target.style.transform = 'scale(1)';
-            });
-        });
+                e.target.style.transform = 'scale(1)'
+            })
+        })
     }
 
     getUserVote(chip, criterion) {
-        return this.gameData.votes[this.username]?.[chip]?.[criterion] || 0;
+        return this.gameData.votes[this.username]?.[chip]?.[criterion] || 0
     }
 
     submitVote(chip, criterion, rating) {
@@ -410,16 +410,16 @@ class ChipsTastingApp {
             chip,
             criterion,
             rating
-        });
+        })
     }
 
     calculateAverages() {
-        const averages = {};
+        const averages = {}
 
         this.gameData.chips.forEach(chip => {
             const votes = Object.values(this.gameData.votes)
                 .map(userVotes => userVotes[chip])
-                .filter(vote => vote && vote.taste && vote.appearance && vote.mouthfeel);
+                .filter(vote => vote && vote.taste && vote.appearance && vote.mouthfeel)
 
             if (votes.length > 0) {
                 averages[chip] = {
@@ -428,33 +428,33 @@ class ChipsTastingApp {
                     mouthfeel: votes.reduce((sum, v) => sum + v.mouthfeel, 0) / votes.length,
                     overall: votes.reduce((sum, v) => sum + v.taste + v.appearance + v.mouthfeel, 0) / (votes.length * 3),
                     count: votes.length
-                };
+                }
             }
-        });
+        })
 
-        return averages;
+        return averages
     }
 
     updateLeaderboard() {
-        const averages = this.calculateAverages();
-        const totalVotes = Object.values(averages).reduce((sum, chip) => sum + chip.count, 0);
+        const averages = this.calculateAverages()
+        const totalVotes = Object.values(averages).reduce((sum, chip) => sum + chip.count, 0)
 
-        document.getElementById('voteCount').textContent = totalVotes;
+        document.getElementById('voteCount').textContent = totalVotes
 
-        this.updateRanking('overallRanking', averages, 'overall');
-        this.updateRanking('tasteRanking', averages, 'taste');
-        this.updateRanking('appearanceRanking', averages, 'appearance');
-        this.updateRanking('mouthfeelRanking', averages, 'mouthfeel');
+        this.updateRanking('overallRanking', averages, 'overall')
+        this.updateRanking('tasteRanking', averages, 'taste')
+        this.updateRanking('appearanceRanking', averages, 'appearance')
+        this.updateRanking('mouthfeelRanking', averages, 'mouthfeel')
     }
 
     updateRanking(elementId, averages, criterion) {
         const sorted = Object.entries(averages)
-            .sort(([,a], [,b]) => b[criterion] - a[criterion]);
+            .sort(([, a], [, b]) => b[criterion] - a[criterion])
 
         const html = sorted.map(([chip, scores], index) => {
-            const chipIndex = this.gameData.chips.indexOf(chip);
-            const displayName = this.getChipDisplayName(chip, chipIndex);
-            const stars = '⭐'.repeat(Math.round(scores[criterion]));
+            const chipIndex = this.gameData.chips.indexOf(chip)
+            const displayName = this.getChipDisplayName(chip, chipIndex)
+            const stars = '⭐'.repeat(Math.round(scores[criterion]))
 
             return `
                 <div class="rank-item">
@@ -462,28 +462,28 @@ class ChipsTastingApp {
                     <span class="rank-name">${displayName}</span>
                     <span class="rank-score">${stars} ${scores[criterion].toFixed(1)}</span>
                 </div>
-            `;
-        }).join('');
+            `
+        }).join('')
 
-        const element = document.getElementById(elementId);
-        element.innerHTML = html || '<div class="no-data">No votes yet</div>';
+        const element = document.getElementById(elementId)
+        element.innerHTML = html || '<div class="no-data">No votes yet</div>'
     }
 
     updateChart() {
-        const averages = this.calculateAverages();
-        const ctx = document.getElementById('leaderboardChart').getContext('2d');
+        const averages = this.calculateAverages()
+        const ctx = document.getElementById('leaderboardChart').getContext('2d')
 
         if (this.chart) {
-            this.chart.destroy();
+            this.chart.destroy()
         }
 
         const data = Object.entries(averages).map(([chip, scores]) => {
-            const chipIndex = this.gameData.chips.indexOf(chip);
+            const chipIndex = this.gameData.chips.indexOf(chip)
             return {
                 chip: this.getChipDisplayName(chip, chipIndex),
                 overall: scores.overall
-            };
-        }).sort((a, b) => b.overall - a.overall);
+            }
+        }).sort((a, b) => b.overall - a.overall)
 
         this.chart = new Chart(ctx, {
             type: 'bar',
@@ -524,82 +524,82 @@ class ChipsTastingApp {
                     }
                 }
             }
-        });
+        })
     }
 
     updateAdminData() {
-        if (!this.isAdmin) return;
+        if (!this.isAdmin) return
 
-        const display = document.getElementById('adminDataDisplay');
-        if (!display) return;
+        const display = document.getElementById('adminDataDisplay')
+        if (!display) return
 
         const formattedData = {
             chips: this.gameData.chips,
             totalVotes: Object.keys(this.gameData.votes).length,
             revealMode: this.revealMode,
             votes: this.gameData.votes
-        };
-        display.textContent = JSON.stringify(formattedData, null, 2);
+        }
+        display.textContent = JSON.stringify(formattedData, null, 2)
 
         // Update chips management
-        this.renderChipsManagement();
+        this.renderChipsManagement()
     }
 
     resetGame() {
         if (!this.isAdmin) {
-            alert('Only admins can reset the game');
-            return;
+            alert('Only admins can reset the game')
+            return
         }
 
         if (confirm('Are you sure you want to reset all data? This will clear all votes and chip samples. This cannot be undone!')) {
-            this.socket.emit('adminReset');
+            this.socket.emit('adminReset')
         }
     }
 }
 
 // Global functions for onclick handlers
 function joinGame() {
-    app.joinGame();
+    app.joinGame()
 }
 
 function logout() {
-    app.logout();
+    app.logout()
 }
 
 function toggleAdminPanel() {
-    app.toggleAdminPanel();
+    app.toggleAdminPanel()
 }
 
 function closeAdminPanel() {
-    app.closeAdminPanel();
+    app.closeAdminPanel()
 }
 
 function adminLogin() {
-    app.adminLogin();
+    app.adminLogin()
 }
 
 function adminLogout() {
-    app.adminLogout();
+    app.adminLogout()
 }
 
 function addChip() {
-    app.addChip();
+    app.addChip()
 }
 
 function removeChip(chipName) {
-    app.removeChip(chipName);
+    app.removeChip(chipName)
 }
 
 function toggleReveal() {
-    app.toggleReveal();
+    app.toggleReveal()
 }
 
 function resetGame() {
-    app.resetGame();
+    app.resetGame()
 }
 
 // Initialize app when page loads
-let app;
+let app
 document.addEventListener('DOMContentLoaded', () => {
-    app = new ChipsTastingApp();
-});
+    app = new ChipsTastingApp()
+})
