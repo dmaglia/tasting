@@ -28,6 +28,7 @@ class ChipsTastingApp {
             this.gameData = data
             this.renderChips()
             this.updateLeaderboard()
+            this.updatePersonalRankings() // Update personal rankings when data changes
             this.updateAdminData()
         })
 
@@ -147,8 +148,8 @@ class ChipsTastingApp {
             return
         }
 
-        // Only handle voting and leaderboard tabs now
-        if (tabName !== 'voting' && tabName !== 'leaderboard') return
+        // Handle all valid tabs
+        if (!['voting', 'leaderboard', 'personal'].includes(tabName)) return
 
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'))
@@ -158,6 +159,11 @@ class ChipsTastingApp {
 
         if (tabName === 'leaderboard' && this.revealMode) {
             setTimeout(() => this.updateChart(), 100)
+        }
+
+        if (tabName === 'personal') {
+            setTimeout(() => this.updatePersonalChart(), 100)
+            this.updatePersonalRankings()
         }
     }
 
@@ -522,6 +528,114 @@ class ChipsTastingApp {
                 }
             }
         })
+    }
+
+    calculatePersonalScores() {
+        const personalScores = {}
+        const userVotes = this.gameData.votes[this.username] || {}
+
+        this.gameData.chips.forEach(chip => {
+            const votes = userVotes[chip]
+            if (votes && votes.taste && votes.appearance && votes.mouthfeel) {
+                personalScores[chip] = {
+                    taste: votes.taste,
+                    appearance: votes.appearance,
+                    mouthfeel: votes.mouthfeel,
+                    overall: (votes.taste + votes.appearance + votes.mouthfeel) / 3
+                }
+            }
+        })
+
+        return personalScores
+    }
+
+    updatePersonalChart() {
+        const personalScores = this.calculatePersonalScores()
+        const ctx = document.getElementById('personalChart').getContext('2d')
+
+        if (this.personalChart) {
+            this.personalChart.destroy()
+        }
+
+        const data = Object.entries(personalScores).map(([chip, scores]) => {
+            const chipIndex = this.gameData.chips.indexOf(chip)
+            return {
+                chip: this.getChipDisplayName(chip, chipIndex),
+                overall: scores.overall
+            }
+        }).sort((a, b) => b.overall - a.overall)
+
+        this.personalChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: data.map(d => d.chip),
+                datasets: [{
+                    label: 'Your Rating',
+                    data: data.map(d => d.overall),
+                    backgroundColor: '#7c3aed',
+                    borderColor: '#6d28d9',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Your Personal Rankings',
+                        font: {
+                            size: 16,
+                            weight: 'bold'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 5,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    updatePersonalRankings() {
+        const personalScores = this.calculatePersonalScores()
+
+        this.updatePersonalRanking('personalOverallRanking', personalScores, 'overall')
+        this.updatePersonalRanking('personalTasteRanking', personalScores, 'taste')
+        this.updatePersonalRanking('personalAppearanceRanking', personalScores, 'appearance')
+        this.updatePersonalRanking('personalMouthfeelRanking', personalScores, 'mouthfeel')
+    }
+
+    updatePersonalRanking(elementId, personalScores, criterion) {
+        const sorted = Object.entries(personalScores)
+            .sort(([, a], [, b]) => b[criterion] - a[criterion])
+
+        const html = sorted.map(([chip, scores], index) => {
+            const chipIndex = this.gameData.chips.indexOf(chip)
+            const displayName = this.getChipDisplayName(chip, chipIndex)
+            const stars = '⭐'.repeat(Math.round(scores[criterion]))
+
+            return `
+                <div class="rank-item">
+                    <span class="rank-position">${index + 1}.</span>
+                    <span class="rank-name">${displayName}</span>
+                    <span class="rank-score">${stars} ${scores[criterion].toFixed(1)}</span>
+                </div>
+            `
+        }).join('')
+
+        const element = document.getElementById(elementId)
+        element.innerHTML = html || '<div class="no-data">No personal votes yet - start rating chips!</div>'
     }
 
     updateAdminData() {

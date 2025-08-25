@@ -53,6 +53,7 @@
 
             <nav class="tabs">
                 <button class="tab active" data-tab="voting">Rate Chips</button>
+                <button class="tab" data-tab="personal">My Rankings</button>
                 <button class="tab" data-tab="leaderboard" id="leaderboardTab">
                     <span>Leaderboard</span>
                     <span class="tab-lock" id="leaderboardLock">🔒</span>
@@ -67,6 +68,36 @@
                     </div>
 
                     <div class="chips-grid" id="chipsGrid"></div>
+                </div>
+
+                <div id="personal-tab" class="tab-panel">
+                    <div class="personal-header">
+                        <h3>📊 Your Personal Rankings</h3>
+                        <p>See how you rated each chip sample</p>
+                    </div>
+
+                    <div class="chart-container">
+                        <canvas id="personalChart"></canvas>
+                    </div>
+
+                    <div class="rankings-grid">
+                        <div class="ranking-card">
+                            <h3>🏆 Your Favorites</h3>
+                            <div id="personalOverallRanking"></div>
+                        </div>
+                        <div class="ranking-card">
+                            <h3>😋 Your Taste Picks</h3>
+                            <div id="personalTasteRanking"></div>
+                        </div>
+                        <div class="ranking-card">
+                            <h3>👀 Your Looks Picks</h3>
+                            <div id="personalAppearanceRanking"></div>
+                        </div>
+                        <div class="ranking-card">
+                            <h3>🤤 Your Mouthfeel Picks</h3>
+                            <div id="personalMouthfeelRanking"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div id="leaderboard-tab" class="tab-panel">

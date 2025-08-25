@@ -1063,6 +1063,25 @@ button:disabled {
         padding: 1rem;
     }
 
+    .personal-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+        border-radius: 16px;
+        color: white;
+    }
+
+    .personal-header h3 {
+        margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+    }
+
+    .personal-header p {
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
     .data-display {
         background: #f9f9f9;
         border: 1px solid #e5e5e5;
