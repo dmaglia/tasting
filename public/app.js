@@ -3,7 +3,9 @@ class ChipsTastingApp {
         this.socket = io()
         this.username = ''
         this.gameData = {chips: [], votes: {}}
+        this.config = {} // Store configuration
         this.chart = null
+        this.personalChart = null
         this.isAdmin = false
         this.revealMode = false
 
@@ -26,9 +28,16 @@ class ChipsTastingApp {
 
         this.socket.on('gameData', (data) => {
             this.gameData = data
+
+            if (typeof data.revealMode === 'boolean') {
+                this.revealMode = data.revealMode
+                this.updateRevealButton()
+                this.updateLeaderboardAccess()
+            }
+
             this.renderChips()
             this.updateLeaderboard()
-            this.updatePersonalRankings() // Update personal rankings when data changes
+            this.updatePersonalRankings()
             this.updateAdminData()
         })
 
@@ -47,6 +56,200 @@ class ChipsTastingApp {
             this.renderChips()
             this.updateLeaderboard()
         })
+
+        this.socket.on('config', (config) => {
+            this.config = config
+            this.updateUIFromConfig()
+            this.updatePersonalRankingsGrid()
+            this.updateLeaderboardRankingsGrid()
+            this.renderChips()
+            this.updateLeaderboard()
+            this.updatePersonalRankings()
+        })
+    }
+
+    updateUIFromConfig() {
+        if (!this.config.event) return
+
+        // Update page title
+        const pageTitle = document.getElementById('pageTitle')
+        if (pageTitle) {
+            pageTitle.textContent = `${this.config.event.title} ${this.config.event.subtitle}`
+        }
+
+        // Update header elements
+        const eventTitle = document.getElementById('eventTitle')
+        const eventSubtitle = document.getElementById('eventSubtitle')
+        const eventDescription = document.getElementById('eventDescription')
+        const eventCallToAction = document.getElementById('eventCallToAction')
+
+        if (eventTitle) {
+            eventTitle.textContent = `${this.config.product?.emoji || '🧪'} Welcome to ${this.config.event.title} ${this.config.product?.emoji || '🧪'}`
+        }
+        if (eventSubtitle) eventSubtitle.textContent = this.config.event.subtitle
+        if (eventDescription) eventDescription.textContent = this.config.event.description
+        if (eventCallToAction) eventCallToAction.textContent = this.config.event.callToAction
+
+        // Update join instructions and button
+        const joinInstructions = document.getElementById('joinInstructions')
+        const joinButton = document.getElementById('joinButton')
+
+        if (joinInstructions && this.config.product?.sampleNamePlural) {
+            joinInstructions.textContent = `Enter your name to start rating our mystery ${this.config.product.sampleNamePlural}!`
+        }
+        if (joinButton && this.config.ui?.joinButtonText) {
+            joinButton.textContent = this.config.ui.joinButtonText
+        }
+
+        // Update tab labels
+        const votingTab = document.getElementById('votingTab')
+        if (votingTab && this.config.product?.namePlural) {
+            votingTab.textContent = `Rate ${this.config.product.namePlural.charAt(0).toUpperCase() + this.config.product.namePlural.slice(1)}`
+        }
+
+        // Update instructions
+        const instructionsTitle = document.getElementById('instructionsTitle')
+        const instructionsText = document.getElementById('instructionsText')
+
+        if (instructionsTitle && this.config.ui?.instructionsTitle) {
+            instructionsTitle.textContent = `${this.config.product?.emoji || '🧪'} ${this.config.ui.instructionsTitle}`
+        }
+        if (instructionsText && this.config.ui?.instructionsText) {
+            instructionsText.textContent = this.config.ui.instructionsText
+        }
+
+        // Update personal rankings header
+        const personalTitle = document.getElementById('personalTitle')
+        const personalSubtitle = document.getElementById('personalSubtitle')
+
+        if (personalTitle && this.config.ui?.personalRankingsTitle) {
+            personalTitle.textContent = `📊 ${this.config.ui.personalRankingsTitle}`
+        }
+        if (personalSubtitle && this.config.ui?.personalRankingsSubtitle) {
+            personalSubtitle.textContent = this.config.ui.personalRankingsSubtitle
+        }
+
+        // Update locked message
+        const lockedMessage = document.getElementById('lockedMessage')
+        const waitingText = document.getElementById('waitingText')
+
+        if (lockedMessage && this.config.ui?.lockedMessage) {
+            lockedMessage.textContent = this.config.ui.lockedMessage
+        }
+        if (waitingText && this.config.ui?.waitingMessage) {
+            waitingText.textContent = this.config.ui.waitingMessage
+        }
+
+        // Update stats label
+        const samplesLabel = document.getElementById('samplesLabel')
+        if (samplesLabel && this.config.product?.unit) {
+            samplesLabel.textContent = `${this.config.product.unit}s`
+        }
+
+        // Update admin section
+        const manageSamplesTitle = document.getElementById('manageSamplesTitle')
+        const manageSamplesDescription = document.getElementById('manageSamplesDescription')
+        const newChipInput = document.getElementById('newChipInput')
+
+        if (manageSamplesTitle && this.config.product) {
+            manageSamplesTitle.textContent = `${this.config.product.emoji} Manage ${this.config.product.unit}s`
+        }
+        if (manageSamplesDescription && this.config.product?.sampleNamePlural) {
+            manageSamplesDescription.textContent = `Add new ${this.config.product.sampleNamePlural} or remove existing ones`
+        }
+        if (newChipInput && this.config.product?.sampleName) {
+            newChipInput.placeholder = `${this.config.product.sampleName} name...`
+        }
+
+        // Update ranking titles
+        this.updateRankingTitles()
+    }
+
+    updateRankingTitles() {
+        if (!this.config.rankings) return
+
+        // Update leaderboard ranking titles
+        Object.keys(this.config.rankings).forEach(key => {
+            const element = document.getElementById(`${key}Title`)
+            if (element && this.config.rankings[key]) {
+                element.textContent = `${this.config.rankings[key].emoji} ${this.config.rankings[key].name}`
+            }
+        })
+
+        // Update personal ranking titles with dynamic criteria
+        if (this.config.criteria) {
+            this.config.criteria.forEach(criterion => {
+                const personalElement = document.getElementById(`personal${criterion.key.charAt(0).toUpperCase() + criterion.key.slice(1)}Title`)
+                if (personalElement) {
+                    personalElement.textContent = `${criterion.emoji} Your ${criterion.name} Picks`
+                }
+            })
+        }
+
+        // Update personal overall title
+        const personalOverallTitle = document.getElementById('personalOverallTitle')
+        if (personalOverallTitle) {
+            personalOverallTitle.textContent = `🏆 Your Favorites`
+        }
+    }
+
+    updatePersonalRankingsGrid() {
+        if (!this.config.criteria) return
+
+        const grid = document.getElementById('personalRankingsGrid')
+        if (!grid) return
+
+        // Create ranking cards based on config criteria
+        const cards = ['overall', ...this.config.criteria.map(c => c.key)]
+
+        grid.innerHTML = cards.map(key => {
+            let title, emoji
+            if (key === 'overall') {
+                title = 'Your Favorites'
+                emoji = '🏆'
+            } else {
+                const criterion = this.config.criteria.find(c => c.key === key)
+                title = `Your ${criterion.name} Picks`
+                emoji = criterion.emoji
+            }
+
+            return `
+                <div class="ranking-card">
+                    <h3 id="personal${key.charAt(0).toUpperCase() + key.slice(1)}Title">${emoji} ${title}</h3>
+                    <div id="personal${key.charAt(0).toUpperCase() + key.slice(1)}Ranking"></div>
+                </div>
+            `
+        }).join('')
+    }
+
+    updateLeaderboardRankingsGrid() {
+        if (!this.config.criteria) return
+
+        const grid = document.getElementById('leaderboardRankingsGrid')
+        if (!grid) return
+
+        // Create ranking cards based on config criteria
+        const cards = ['overall', ...this.config.criteria.map(c => c.key)]
+
+        grid.innerHTML = cards.map(key => {
+            let title, emoji
+            if (key === 'overall') {
+                title = this.config.rankings?.overall?.name || 'Overall Champion'
+                emoji = this.config.rankings?.overall?.emoji || '🏆'
+            } else {
+                const criterion = this.config.criteria.find(c => c.key === key)
+                const ranking = this.config.rankings?.[key]
+                title = ranking?.name || `Best ${criterion.name}`
+                emoji = ranking?.emoji || criterion.emoji
+            }
+
+            return `
+                <div class="ranking-card">
+                    <h3 id="${key}Title">${emoji} ${title}</h3>
+                    <div id="${key}Ranking"></div>
+                </div>
+            `
+        }).join('')
     }
 
     setupEventListeners() {
@@ -326,7 +529,7 @@ class ChipsTastingApp {
         const container = document.getElementById('chipsGrid')
 
         if (this.gameData.chips.length === 0) {
-            container.innerHTML = '<div class="no-data">No chip samples available yet. Admin will add them soon!</div>'
+            container.innerHTML = `<div class="no-data">${this.config.ui?.noSamplesMessage || 'No samples available yet. Admin will add them soon!'}</div>`
             return
         }
 
@@ -337,11 +540,9 @@ class ChipsTastingApp {
             return `
                 <div class="${cardClass}">
                     ${hasUserVoted ? '<div class="completion-indicator">✓</div>' : ''}
-                    <div class="chip-name">🥔 ${this.getChipDisplayName(chip, index)}</div>
+                    <div class="chip-name">${this.getChipDisplayName(chip, index)}</div>
                     <div class="criteria-grid">
-                        ${this.renderCriterion(chip, 'taste', '👅 Taste')}
-                        ${this.renderCriterion(chip, 'appearance', '👀 Looks')}
-                        ${this.renderCriterion(chip, 'mouthfeel', '🤤 Mouthfeel')}
+                        ${this.renderCriteria(chip)}
                     </div>
                 </div>
             `
@@ -353,7 +554,25 @@ class ChipsTastingApp {
 
     hasUserVotedForChip(chip) {
         const userVotes = this.gameData.votes[this.username]?.[chip]
-        return userVotes && userVotes.taste && userVotes.appearance && userVotes.mouthfeel
+        if (!userVotes) return false
+
+        const criteria = this.config.criteria || [{key: 'taste'}, {key: 'appearance'}, {key: 'mouthfeel'}]
+        return criteria.every(c => userVotes[c.key])
+    }
+
+    renderCriteria(chip) {
+        if (!this.config.criteria) {
+            // Fallback to default criteria
+            return `
+                ${this.renderCriterion(chip, 'taste', '👅 Taste')}
+                ${this.renderCriterion(chip, 'appearance', '👀 Looks')}
+                ${this.renderCriterion(chip, 'mouthfeel', '🤤 Mouthfeel')}
+            `
+        }
+
+        return this.config.criteria.map(criterion =>
+            this.renderCriterion(chip, criterion.key, `${criterion.emoji} ${criterion.name}`)
+        ).join('')
     }
 
     renderCriterion(chip, criterion, label) {
@@ -418,20 +637,29 @@ class ChipsTastingApp {
 
     calculateAverages() {
         const averages = {}
+        const criteria = this.config.criteria || [
+            {key: 'taste'},
+            {key: 'appearance'},
+            {key: 'mouthfeel'}
+        ]
 
         this.gameData.chips.forEach(chip => {
             const votes = Object.values(this.gameData.votes)
                 .map(userVotes => userVotes[chip])
-                .filter(vote => vote && vote.taste && vote.appearance && vote.mouthfeel)
+                .filter(vote => vote && criteria.every(c => vote[c.key]))
 
             if (votes.length > 0) {
-                averages[chip] = {
-                    taste: votes.reduce((sum, v) => sum + v.taste, 0) / votes.length,
-                    appearance: votes.reduce((sum, v) => sum + v.appearance, 0) / votes.length,
-                    mouthfeel: votes.reduce((sum, v) => sum + v.mouthfeel, 0) / votes.length,
-                    overall: votes.reduce((sum, v) => sum + v.taste + v.appearance + v.mouthfeel, 0) / (votes.length * 3),
-                    count: votes.length
-                }
+                const chipAverages = {count: votes.length, overall: 0}
+                let total = 0
+
+                criteria.forEach(c => {
+                    const sum = votes.reduce((s, v) => s + v[c.key], 0)
+                    chipAverages[c.key] = sum / votes.length
+                    total += chipAverages[c.key]
+                })
+
+                chipAverages.overall = total / criteria.length
+                averages[chip] = chipAverages
             }
         })
 
@@ -441,16 +669,19 @@ class ChipsTastingApp {
     updateLeaderboard() {
         const averages = this.calculateAverages()
         const totalVotes = Object.values(averages).reduce((sum, chip) => sum + chip.count, 0)
-
         document.getElementById('voteCount').textContent = totalVotes
 
-        this.updateRanking('overallRanking', averages, 'overall')
-        this.updateRanking('tasteRanking', averages, 'taste')
-        this.updateRanking('appearanceRanking', averages, 'appearance')
-        this.updateRanking('mouthfeelRanking', averages, 'mouthfeel')
+        const criteriaKeys = ['overall', ...(this.config.criteria || [{key: 'taste'}, {key: 'appearance'}, {key: 'mouthfeel'}]).map(c => c.key)]
+
+        criteriaKeys.forEach(key => {
+            this.updateRanking(`${key}Ranking`, averages, key)
+        })
     }
 
     updateRanking(elementId, averages, criterion) {
+        const element = document.getElementById(elementId)
+        if (!element) return
+
         const sorted = Object.entries(averages)
             .sort(([, a], [, b]) => b[criterion] - a[criterion])
 
@@ -468,7 +699,6 @@ class ChipsTastingApp {
             `
         }).join('')
 
-        const element = document.getElementById(elementId)
         element.innerHTML = html || '<div class="no-data">No votes yet</div>'
     }
 
@@ -533,16 +763,27 @@ class ChipsTastingApp {
     calculatePersonalScores() {
         const personalScores = {}
         const userVotes = this.gameData.votes[this.username] || {}
+        const criteria = this.config.criteria || [
+            {key: 'taste'},
+            {key: 'appearance'},
+            {key: 'mouthfeel'}
+        ]
 
         this.gameData.chips.forEach(chip => {
             const votes = userVotes[chip]
-            if (votes && votes.taste && votes.appearance && votes.mouthfeel) {
-                personalScores[chip] = {
-                    taste: votes.taste,
-                    appearance: votes.appearance,
-                    mouthfeel: votes.mouthfeel,
-                    overall: (votes.taste + votes.appearance + votes.mouthfeel) / 3
-                }
+            const hasAllVotes = criteria.every(c => votes && votes[c.key])
+
+            if (hasAllVotes) {
+                const scores = {overall: 0}
+                let total = 0
+
+                criteria.forEach(c => {
+                    scores[c.key] = votes[c.key]
+                    total += votes[c.key]
+                })
+
+                scores.overall = total / criteria.length
+                personalScores[chip] = scores
             }
         })
 
@@ -609,14 +850,18 @@ class ChipsTastingApp {
 
     updatePersonalRankings() {
         const personalScores = this.calculatePersonalScores()
+        const criteriaKeys = ['overall', ...(this.config.criteria || [{key: 'taste'}, {key: 'appearance'}, {key: 'mouthfeel'}]).map(c => c.key)]
 
-        this.updatePersonalRanking('personalOverallRanking', personalScores, 'overall')
-        this.updatePersonalRanking('personalTasteRanking', personalScores, 'taste')
-        this.updatePersonalRanking('personalAppearanceRanking', personalScores, 'appearance')
-        this.updatePersonalRanking('personalMouthfeelRanking', personalScores, 'mouthfeel')
+        criteriaKeys.forEach(key => {
+            const elementId = `personal${key.charAt(0).toUpperCase() + key.slice(1)}Ranking`
+            this.updatePersonalRanking(elementId, personalScores, key)
+        })
     }
 
     updatePersonalRanking(elementId, personalScores, criterion) {
+        const element = document.getElementById(elementId)
+        if (!element) return
+
         const sorted = Object.entries(personalScores)
             .sort(([, a], [, b]) => b[criterion] - a[criterion])
 
@@ -634,8 +879,7 @@ class ChipsTastingApp {
             `
         }).join('')
 
-        const element = document.getElementById(elementId)
-        element.innerHTML = html || '<div class="no-data">No personal votes yet - start rating chips!</div>'
+        element.innerHTML = html || '<div class="no-data">No personal votes yet - start rating!</div>'
     }
 
     updateAdminData() {
@@ -673,6 +917,9 @@ class ChipsTastingApp {
             return
         }
 
+        const adminSecret = prompt('Enter admin password to export data:')
+        if (!adminSecret) return
+
         // Create download link
         const exportUrl = `/api/backup?admin=${encodeURIComponent(adminSecret)}`
         const link = document.createElement('a')
@@ -694,6 +941,9 @@ class ChipsTastingApp {
         }
 
         try {
+            const adminSecret = prompt('Enter admin password to import data:')
+            if (!adminSecret) return
+
             const fileContent = await this.readFileAsText(file)
             const gameData = JSON.parse(fileContent)
 

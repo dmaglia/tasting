@@ -1,0 +1,70 @@
+{
+  "event": {
+    "title": "Chocolate Excellence",
+    "subtitle": "Premium Chocolate Tasting",
+    "description": "Join us for an exclusive blind chocolate tasting experience!",
+    "callToAction": "Rate each mystery chocolate and help us discover the ultimate indulgence"
+  },
+  "product": {
+    "name": "chocolate",
+    "namePlural": "chocolates",
+    "emoji": "🍫",
+    "sampleName": "chocolate sample",
+    "sampleNamePlural": "chocolate samples",
+    "unit": "Sample"
+  },
+  "criteria": [
+    {
+      "key": "taste",
+      "name": "Taste",
+      "emoji": "👅",
+      "description": "How does it taste?"
+    },
+    {
+      "key": "texture",
+      "name": "Texture",
+      "emoji": "🤤",
+      "description": "How does it feel in your mouth?"
+    },
+    {
+      "key": "appearance",
+      "name": "Appearance",
+      "emoji": "👀",
+      "description": "How does it look?"
+    }
+  ],
+  "rankings": {
+    "overall": {
+      "name": "Overall Champion",
+      "emoji": "🏆"
+    },
+    "taste": {
+      "name": "Best Taste",
+      "emoji": "😋"
+    },
+    "texture": {
+      "name": "Best Texture",
+      "emoji": "🤤"
+    },
+    "appearance": {
+      "name": "Most Beautiful",
+      "emoji": "✨"
+    }
+  },
+  "defaultSamples": [
+    "Dark 70% Cacao",
+    "Milk Chocolate Classic",
+    "White Chocolate Vanilla"
+  ],
+  "ui": {
+    "joinButtonText": "Join the Tasting!",
+    "instructionsTitle": "Blind Chocolate Tasting",
+    "instructionsText": "Each chocolate is numbered to keep the tasting fair and unbiased. Rate each one honestly!",
+    "personalRankingsTitle": "Your Chocolate Preferences",
+    "personalRankingsSubtitle": "Discover your personal taste profile and favorite chocolate styles",
+    "noSamplesMessage": "No chocolate samples available yet. Admin will add them soon!",
+    "completedMessage": "Congratulations! You've tasted all available chocolates.",
+    "waitingMessage": "Waiting for the grand reveal...",
+    "lockedMessage": "The anticipation is building! Results are hidden until the dramatic reveal moment."
+  }
+}

@@ -1,11 +1,11 @@
-# 🥔 Chips Tasting Party App
+# 🧪 Blind Tasting Party App
 
-A real-time web application for hosting blind chip tasting parties with friends! Rate chip samples anonymously and reveal the ultimate champion in a dramatic finale.
+A real-time web application for hosting blind tasting parties with friends! Rate samples anonymously and reveal the ultimate champion in a dramatic finale.
 
 ## ✨ Features
 
-- **🎭 Blind Tasting Mode**: Chips are shown as numbered samples to prevent bias
-- **⭐ Star Rating System**: Rate each chip on taste, appearance, and mouthfeel (1-5 stars)
+- **🎭 Blind Tasting Mode**: Samples are shown as numbered samples to prevent bias
+- **⭐ Star Rating System**: Rate each sample taste, appearance, and mouthfeel (1-5 stars)
 - **🔴 Real-time Updates**: All votes and changes sync instantly across devices using Socket.IO
 - **📱 Mobile Optimized**: Works perfectly on smartphones - no app download needed
 - **🔐 Admin Controls**: Password-protected admin panel for managing the party
@@ -65,8 +65,8 @@ ADMIN_SECRET=your-super-secret-admin-password
 
 1. **Setup**: Deploy the app and share the URL with guests
 2. **Admin Access**: Click the ⚙️ settings icon in the header
-3. **Add Chips**: Use the admin panel to add chip samples before the party
-4. **Start Tasting**: Guests join and rate chips in blind mode
+3. **Add Samples**: Use the admin panel to add samples before the party
+4. **Start Tasting**: Guests join and rate samples in blind mode
 5. **The Big Reveal**: Toggle "Reveal Mode" to show names and results! 🎉
 
 ### For Guests
@@ -98,7 +98,7 @@ Other Devices ←←←←←←← Real-time Broadcasts ←←←←←←←�
 ```
 
 ### Security Features
-- **Input Validation**: All votes and chip names are validated
+- **Input Validation**: All votes and sample names are validated
 - **Admin Authentication**: Protected admin functions require password
 - **Rate Limiting**: Built-in protection via Socket.IO
 - **Sanitization**: User inputs are escaped to prevent XSS

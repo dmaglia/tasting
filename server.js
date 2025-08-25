@@ -18,7 +18,43 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 3000
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'chips2025'
+const CONFIG_FILE = process.env.CONFIG_FILE || 'config.json'
 const DATA_FILE = path.join(__dirname, 'game-data.json')
+
+// Load configuration
+let config = {}
+
+async function loadConfig() {
+    try {
+        const configPath = path.join(__dirname, CONFIG_FILE)
+        const configData = await fs.readFile(configPath, 'utf8')
+        config = JSON.parse(configData)
+        console.log(`✅ Configuration loaded from ${CONFIG_FILE}`)
+        console.log(`🎯 Event: ${config.event.title} ${config.event.subtitle}`)
+    } catch (error) {
+        console.error(`❌ Error loading config file ${CONFIG_FILE}:`, error.message)
+        console.log('📝 Using default chips configuration')
+
+        // Fallback to default chips config
+        config = {
+            event: {
+                title: "Tasting Party",
+                subtitle: "Blind Tasting Event",
+                description: "Welcome to our tasting experience!",
+                callToAction: "Rate each sample and help us find the winner!"
+            },
+            product: {
+                name: "sample",
+                namePlural: "samples",
+                emoji: "🧪",
+                sampleName: "sample",
+                sampleNamePlural: "samples",
+                unit: "Sample"
+            },
+            defaultSamples: ["Sample A", "Sample B", "Sample C"]
+        }
+    }
+}
 
 app.use(helmet({
     contentSecurityPolicy: false
@@ -28,17 +64,19 @@ app.use(cors())
 app.use(express.json({limit: '10mb'}))
 app.use(express.static('public'))
 
-// Default game data
-const defaultGameData = {
-    chips: ['Classic Paprika', 'Salt & Vinegar', 'Sour Cream & Onion'],
-    votes: {},
-    activeUsers: [],
-    revealMode: false,
-    createdAt: new Date().toISOString(),
-    lastUpdated: new Date().toISOString()
+// Default game data - now uses config
+function getDefaultGameData() {
+    return {
+        chips: [...(config.defaultSamples || ['Sample A', 'Sample B', 'Sample C'])],
+        votes: {},
+        activeUsers: [],
+        revealMode: false,
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString()
+    }
 }
 
-let gameData = {...defaultGameData}
+let gameData = getDefaultGameData()
 const adminSessions = new Set()
 
 // Data persistence functions
@@ -54,15 +92,15 @@ async function loadGameData() {
         }
 
         console.log('✅ Game data loaded from file')
-        console.log(`📊 ${gameData.chips.length} chips, ${Object.keys(gameData.votes).length} users with votes`)
+        console.log(`📊 ${gameData.chips.length} ${config.product?.sampleNamePlural || 'samples'}, ${Object.keys(gameData.votes).length} users with votes`)
     } catch (error) {
         if (error.code === 'ENOENT') {
             console.log('📝 No existing data file found, starting fresh')
-            gameData = {...defaultGameData, activeUsers: new Set()}
+            gameData = {...getDefaultGameData(), activeUsers: new Set()}
             await saveGameData()
         } else {
             console.error('❌ Error loading game data:', error.message)
-            gameData = {...defaultGameData, activeUsers: new Set()}
+            gameData = {...getDefaultGameData(), activeUsers: new Set()}
         }
     }
 }
@@ -107,6 +145,7 @@ io.on('connection', (socket) => {
         activeUsers: Array.from(gameData.activeUsers)
     })
     socket.emit('revealModeUpdate', gameData.revealMode)
+    socket.emit('config', config) // Send config to client
 
     socket.on('joinGame', async (username) => {
         gameData.activeUsers.add(username)
@@ -221,12 +260,8 @@ io.on('connection', (socket) => {
         }
 
         gameData = {
-            chips: ['Classic Paprika', 'Salt & Vinegar', 'Sour Cream & Onion'],
-            votes: {},
-            activeUsers: new Set(),
-            revealMode: false,
-            createdAt: new Date().toISOString(),
-            lastUpdated: new Date().toISOString()
+            ...getDefaultGameData(),
+            activeUsers: new Set()
         }
 
         await saveGameData()
@@ -245,6 +280,11 @@ io.on('connection', (socket) => {
         adminSessions.delete(socket.id)
         console.log('User disconnected:', socket.id)
     })
+})
+
+// API endpoint to get config (for debugging)
+app.get('/api/config', (req, res) => {
+    res.json(config)
 })
 
 // Health check endpoint with data info
@@ -355,13 +395,15 @@ app.post('/api/import', async (req, res) => {
 
 // Initialize server
 async function startServer() {
+    await loadConfig() // Load config first
     await loadGameData()
 
     server.listen(PORT, () => {
-        console.log(`🥔 Chips Tasting Server running on port ${PORT}`)
+        console.log(`${config.product?.emoji || '🧪'} ${config.event?.title || 'Tasting'} Server running on port ${PORT}`)
         console.log(`🔐 Admin secret: ${ADMIN_SECRET}`)
         console.log(`📊 Health check: http://localhost:${PORT}/health`)
         console.log(`💾 Data file: ${DATA_FILE}`)
+        console.log(`⚙️  Config file: ${CONFIG_FILE}`)
         console.log(`🔗 Backup URL: http://localhost:${PORT}/api/backup?admin=${ADMIN_SECRET}`)
     })
 }

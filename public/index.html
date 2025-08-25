@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chati's & Dominik's Chips Tasting Party</title>
+    <title id="pageTitle">Tasting Party</title>
     <link rel="stylesheet" href="styles.css">
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -18,9 +18,10 @@
                     <span class="badge-icon">✨</span>
                 </div>
             </div>
-            <h1>🥔 Welcome to Chati's & Dominik's 🥔</h1>
-            <h2>Chips Tasting Party</h2>
-            <p>Rate each mystery chip sample and help us crown the ultimate champion 🏆</p>
+            <h1 id="eventTitle">🧪 Welcome to Your Tasting Party 🧪</h1>
+            <h2 id="eventSubtitle">Blind Tasting Experience</h2>
+            <p id="eventDescription">You're invited to our exclusive blind tasting experience!</p>
+            <p id="eventCallToAction">Rate each mystery sample and help us crown the ultimate champion 🏆</p>
         </div>
         <div class="header-controls">
             <div class="connection-status" id="connectionStatus">
@@ -37,7 +38,7 @@
         <div class="user-setup" id="userSetup">
             <div class="welcome-message">
                 <h3>🎉 Ready to join the fun?</h3>
-                <p>Enter your name to start rating our mystery chip samples!</p>
+                <p id="joinInstructions">Enter your name to start rating our mystery samples!</p>
             </div>
             <div class="input-group">
                 <input type="text" id="usernameInput" placeholder="Enter your name to join..." maxlength="20">
@@ -52,8 +53,8 @@
             </div>
 
             <nav class="tabs">
-                <button class="tab active" data-tab="voting">Rate Chips</button>
-                <button class="tab" data-tab="personal">My Rankings</button>
+                <button class="tab active" data-tab="voting" id="votingTab">Rate Samples</button>
+                <button class="tab" data-tab="personal" id="personalTab">My Rankings</button>
                 <button class="tab" data-tab="leaderboard" id="leaderboardTab">
                     <span>Leaderboard</span>
                     <span class="tab-lock" id="leaderboardLock">🔒</span>
@@ -63,8 +64,8 @@
             <div class="tab-content">
                 <div id="voting-tab" class="tab-panel active">
                     <div class="tasting-instructions">
-                        <h3>🥔 Blind Tasting Instructions</h3>
-                        <p>Each chip sample is numbered to keep the tasting fair and unbiased. Rate each one honestly!</p>
+                        <h3 id="instructionsTitle">🧪 Blind Tasting Instructions</h3>
+                        <p id="instructionsText">Each sample is numbered to keep the tasting fair and unbiased. Rate each one honestly!</p>
                     </div>
 
                     <div class="chips-grid" id="chipsGrid"></div>
@@ -72,29 +73,29 @@
 
                 <div id="personal-tab" class="tab-panel">
                     <div class="personal-header">
-                        <h3>📊 Your Personal Rankings</h3>
-                        <p>See how you rated each chip sample</p>
+                        <h3 id="personalTitle">📊 Your Personal Favorites</h3>
+                        <p id="personalSubtitle">See how you rated each sample compared to your other choices</p>
                     </div>
 
                     <div class="chart-container">
                         <canvas id="personalChart"></canvas>
                     </div>
 
-                    <div class="rankings-grid">
+                    <div class="rankings-grid" id="personalRankingsGrid">
                         <div class="ranking-card">
-                            <h3>🏆 Your Favorites</h3>
+                            <h3 id="personalOverallTitle">🏆 Your Favorites</h3>
                             <div id="personalOverallRanking"></div>
                         </div>
                         <div class="ranking-card">
-                            <h3>😋 Your Taste Picks</h3>
+                            <h3 id="personalTasteTitle">😋 Your Taste Picks</h3>
                             <div id="personalTasteRanking"></div>
                         </div>
                         <div class="ranking-card">
-                            <h3>👀 Your Looks Picks</h3>
+                            <h3 id="personalAppearanceTitle">👀 Your Looks Picks</h3>
                             <div id="personalAppearanceRanking"></div>
                         </div>
                         <div class="ranking-card">
-                            <h3>🤤 Your Mouthfeel Picks</h3>
+                            <h3 id="personalMouthfeelTitle">🤤 Your Feel Picks</h3>
                             <div id="personalMouthfeelRanking"></div>
                         </div>
                     </div>
@@ -105,7 +106,8 @@
                         <div class="locked-container">
                             <div class="locked-icon-big">🎭</div>
                             <h3>🔒 Leaderboard Locked</h3>
-                            <p>The excitement is building! The leaderboard is currently hidden to keep the tasting completely fair and unbiased.</p>
+                            <p id="lockedMessage">The excitement is building! The leaderboard is currently hidden to keep the tasting completely fair and
+                                unbiased.</p>
                             <p>Once everyone has completed their ratings, the admin will reveal the results for the grand finale! 🎉</p>
                             <div class="locked-features">
                                 <div class="feature-item">
@@ -123,7 +125,7 @@
                             </div>
                             <div class="waiting-message">
                                 <span class="pulse-dot"></span>
-                                Waiting for reveal mode...
+                                <span id="waitingText">Waiting for reveal mode...</span>
                             </div>
                         </div>
                     </div>
@@ -132,7 +134,7 @@
                         <div class="stats-card">
                             <div class="stat">
                                 <span class="stat-number" id="chipCount">0</span>
-                                <span class="stat-label">Chip Samples</span>
+                                <span class="stat-label" id="samplesLabel">Samples</span>
                             </div>
                             <div class="stat">
                                 <span class="stat-number" id="voteCount">0</span>
@@ -148,21 +150,21 @@
                             <canvas id="leaderboardChart"></canvas>
                         </div>
 
-                        <div class="rankings-grid">
+                        <div class="rankings-grid" id="leaderboardRankingsGrid">
                             <div class="ranking-card">
-                                <h3>🏆 Overall Champion</h3>
+                                <h3 id="overallTitle">🏆 Overall Champion</h3>
                                 <div id="overallRanking"></div>
                             </div>
                             <div class="ranking-card">
-                                <h3>😋 Best Taste</h3>
+                                <h3 id="tasteTitle">😋 Best Taste</h3>
                                 <div id="tasteRanking"></div>
                             </div>
                             <div class="ranking-card">
-                                <h3>👀 Best Looks</h3>
+                                <h3 id="appearanceTitle">👀 Best Looks</h3>
                                 <div id="appearanceRanking"></div>
                             </div>
                             <div class="ranking-card">
-                                <h3>🤤 Best Mouthfeel</h3>
+                                <h3 id="mouthfeelTitle">🤤 Best Mouthfeel</h3>
                                 <div id="mouthfeelRanking"></div>
                             </div>
                         </div>
@@ -193,10 +195,10 @@
                 </div>
 
                 <div class="admin-section">
-                    <h4>🥔 Manage Chip Samples</h4>
-                    <p>Add new chip flavors or remove existing ones</p>
+                    <h4 id="manageSamplesTitle">🧪 Manage Samples</h4>
+                    <p id="manageSamplesDescription">Add new samples or remove existing ones</p>
                     <div class="input-group">
-                        <input type="text" id="newChipInput" placeholder="Chip flavor name..." maxlength="30">
+                        <input type="text" id="newChipInput" placeholder="Sample name..." maxlength="30">
                         <button onclick="addChip()">Add Sample</button>
                     </div>
 
@@ -207,7 +209,7 @@
 
                 <div class="admin-section">
                     <h4>👁️ Reveal Mode</h4>
-                    <p>Toggle between numbered samples and real chip names</p>
+                    <p>Toggle between numbered samples and real names</p>
                     <div class="reveal-controls">
                         <button id="revealToggle" onclick="toggleReveal()" class="reveal-btn">
                             <span id="revealText">🎭 Reveal Names</span>
