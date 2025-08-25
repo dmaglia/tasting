@@ -137,67 +137,89 @@
                         </div>
                     </div>
                 </div>
-
-                <div id="admin-panel" class="admin-overlay" style="display: none;">
-                    <div class="admin-modal">
-                        <div class="admin-login" id="adminLogin">
-                            <div class="admin-login-card">
-                                <h3>🔐 Admin Access</h3>
-                                <p>Enter the admin password to access party controls</p>
-                                <div class="input-group">
-                                    <input type="password" id="adminPassword" placeholder="Admin password...">
-                                    <button onclick="adminLogin()">Login</button>
-                                </div>
-                                <button class="close-admin" onclick="closeAdminPanel()">✕ Close</button>
-                            </div>
-                        </div>
-
-                        <div class="admin-panel-content" id="adminPanelContent" style="display: none;">
-                            <div class="admin-header">
-                                <h3>🎛️ Party Control Center</h3>
-                                <button onclick="closeAdminPanel()" class="close-admin">✕ Close</button>
-                            </div>
-
-                            <div class="admin-section">
-                                <h4>🥔 Manage Chip Samples</h4>
-                                <p>Add new chip flavors or remove existing ones</p>
-                                <div class="input-group">
-                                    <input type="text" id="newChipInput" placeholder="Chip flavor name..." maxlength="30">
-                                    <button onclick="addChip()">Add Sample</button>
-                                </div>
-
-                                <div class="chips-management" id="chipsManagement">
-                                    <!-- Chips list will be populated here -->
-                                </div>
-                            </div>
-
-                            <div class="admin-section">
-                                <h4>👁️ Reveal Mode</h4>
-                                <p>Toggle between numbered samples and real chip names</p>
-                                <div class="reveal-controls">
-                                    <button id="revealToggle" onclick="toggleReveal()" class="reveal-btn">
-                                        <span id="revealText">🎭 Reveal Names</span>
-                                    </button>
-                                    <span class="reveal-status" id="revealStatus">Currently: Blind Mode</span>
-                                </div>
-                            </div>
-
-                            <div class="admin-section">
-                                <h4>🔄 Reset Party</h4>
-                                <p>Clear all votes and reset to start fresh</p>
-                                <button onclick="resetGame()" class="danger-btn">Reset Everything</button>
-                            </div>
-
-                            <div class="admin-section">
-                                <h4>📊 Current Data</h4>
-                                <div class="data-display" id="adminDataDisplay"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </main>
+
+    <div id="admin-panel" class="admin-overlay" style="display: none;">
+        <div class="admin-modal">
+            <div class="admin-login" id="adminLogin">
+                <div class="admin-login-card">
+                    <h3>🔐 Admin Access</h3>
+                    <p>Enter the admin password to access party controls</p>
+                    <div class="input-group">
+                        <input type="password" id="adminPassword" placeholder="Admin password...">
+                        <button onclick="adminLogin()">Login</button>
+                    </div>
+                    <button class="close-admin" onclick="closeAdminPanel()">✕ Close</button>
+                </div>
+            </div>
+
+            <div class="admin-panel-content" id="adminPanelContent" style="display: none;">
+                <div class="admin-header">
+                    <h3>🎛️ Party Control Center</h3>
+                    <button onclick="closeAdminPanel()" class="close-admin">✕ Close</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4>🥔 Manage Chip Samples</h4>
+                    <p>Add new chip flavors or remove existing ones</p>
+                    <div class="input-group">
+                        <input type="text" id="newChipInput" placeholder="Chip flavor name..." maxlength="30">
+                        <button onclick="addChip()">Add Sample</button>
+                    </div>
+
+                    <div class="chips-management" id="chipsManagement">
+                        <!-- Chips list will be populated here -->
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h4>👁️ Reveal Mode</h4>
+                    <p>Toggle between numbered samples and real chip names</p>
+                    <div class="reveal-controls">
+                        <button id="revealToggle" onclick="toggleReveal()" class="reveal-btn">
+                            <span id="revealText">🎭 Reveal Names</span>
+                        </button>
+                        <span class="reveal-status" id="revealStatus">Currently: Blind Mode</span>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h4>💾 Data Management</h4>
+                    <p>Export current game data or import from a previous session</p>
+
+                    <div class="data-actions">
+                        <button onclick="exportGameData()" class="export-btn">
+                            📤 Export Game Data
+                        </button>
+
+                        <div class="import-section">
+                            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="handleFileImport(event)">
+                            <button onclick="document.getElementById('importFile').click()" class="import-btn">
+                                📥 Import Game Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="data-info">
+                        <small>💡 Export creates a downloadable backup. Import replaces current data (keeps active users).</small>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <h4>🔄 Reset Party</h4>
+                    <p>Clear all votes and reset to start fresh</p>
+                    <button onclick="resetGame()" class="danger-btn">Reset Everything</button>
+                </div>
+
+                <div class="admin-section">
+                    <h4>📊 Current Data</h4>
+                    <div class="data-display" id="adminDataDisplay"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="app.js"></script>

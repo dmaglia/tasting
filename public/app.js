@@ -130,7 +130,7 @@ class ChipsTastingApp {
 
             // Reset admin state
             document.getElementById('adminLogin').style.display = 'block'
-            document.getElementById('adminPanel').style.display = 'none'
+            document.getElementById('adminPanelContent').style.display = 'none'
             document.getElementById('adminPassword').value = ''
         }
     }
@@ -162,9 +162,6 @@ class ChipsTastingApp {
     }
 
     updateLeaderboardAccess() {
-        const leaderboardTab = document.getElementById('leaderboardTab')
-        const leaderboardLock = document.getElementById('leaderboardLock')
-        const leaderboardLocked = document.getElementById('leaderboardLocked')
         const leaderboardContent = document.getElementById('leaderboardContent')
 
         if (this.revealMode) {
@@ -227,39 +224,6 @@ class ChipsTastingApp {
         document.getElementById('adminPassword').value = ''
     }
 
-    renderChipsManagement() {
-        if (!this.isAdmin) return
-
-        const container = document.getElementById('chipsManagement')
-        if (!container) return
-
-        if (this.gameData.chips.length === 0) {
-            container.innerHTML = '<p class="no-data">No chips added yet</p>'
-            return
-        }
-
-        container.innerHTML = `
-            <h5>Current Chips:</h5>
-            ${this.gameData.chips.map(chip => `
-                <div class="chip-item">
-                    <span class="chip-item-name">${chip}</span>
-                    <button class="remove-chip-btn" onclick="removeChip('${chip}')">Remove</button>
-                </div>
-            `).join('')}
-        `
-    }
-
-    removeChip(chipName) {
-        if (!this.isAdmin) {
-            alert('Only admins can remove chip samples')
-            return
-        }
-
-        if (confirm(`Are you sure you want to remove "${chipName}"? This will also delete all votes for this chip.`)) {
-            this.socket.emit('removeChip', chipName)
-        }
-    }
-
     addChip() {
         if (!this.isAdmin) {
             alert('Only admins can add new chip samples')
@@ -281,6 +245,17 @@ class ChipsTastingApp {
 
         this.socket.emit('addChip', chipName)
         input.value = ''
+    }
+
+    removeChip(chipName) {
+        if (!this.isAdmin) {
+            alert('Only admins can remove chip samples')
+            return
+        }
+
+        if (confirm(`Are you sure you want to remove "${chipName}"? This will also delete all votes for this chip.`)) {
+            this.socket.emit('removeChip', chipName)
+        }
     }
 
     toggleReveal() {
@@ -307,9 +282,31 @@ class ChipsTastingApp {
         }
     }
 
+    renderChipsManagement() {
+        if (!this.isAdmin) return
+
+        const container = document.getElementById('chipsManagement')
+        if (!container) return
+
+        if (this.gameData.chips.length === 0) {
+            container.innerHTML = '<p class="no-data">No chips added yet</p>'
+            return
+        }
+
+        container.innerHTML = `
+            <h5>Current Chips:</h5>
+            ${this.gameData.chips.map(chip => `
+                <div class="chip-item">
+                    <span class="chip-item-name">${chip}</span>
+                    <button class="remove-chip-btn" onclick="removeChip('${chip}')">Remove</button>
+                </div>
+            `).join('')}
+        `
+    }
+
     getChipDisplayName(chip, index) {
         // If we're in admin panel and logged in as admin, always show real names
-        if (this.isAdmin && document.querySelector('.admin-panel')?.style.display !== 'none') {
+        if (this.isAdmin && document.querySelector('.admin-panel-content')?.style.display !== 'none') {
             return chip
         }
         // For regular users, follow reveal mode
@@ -555,6 +552,69 @@ class ChipsTastingApp {
             this.socket.emit('adminReset')
         }
     }
+
+    exportGameData() {
+        if (!this.isAdmin) {
+            alert('Only admins can export game data')
+            return
+        }
+
+        // Create download link
+        const exportUrl = `/api/backup?admin=${encodeURIComponent(adminSecret)}`
+        const link = document.createElement('a')
+        link.href = exportUrl
+        link.download = `chips-tasting-backup-${new Date().toISOString().split('T')[0]}.json`
+
+        // Trigger download
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+
+        console.log('📤 Game data export initiated')
+    }
+
+    async importGameData(file) {
+        if (!this.isAdmin) {
+            alert('Only admins can import game data')
+            return
+        }
+
+        try {
+            const fileContent = await this.readFileAsText(file)
+            const gameData = JSON.parse(fileContent)
+
+            const response = await fetch('/api/import', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Admin-Secret': adminSecret
+                },
+                body: JSON.stringify(gameData)
+            })
+
+            const result = await response.json()
+
+            if (response.ok) {
+                alert(`✅ Import successful!\n\nImported:\n• ${result.stats.chips} chip samples\n• ${result.stats.users} users with votes\n• Reveal mode: ${result.stats.revealMode ? 'ON' : 'OFF'}`)
+                console.log('📥 Game data imported successfully:', result)
+            } else {
+                alert(`❌ Import failed: ${result.error}`)
+                console.error('Import error:', result)
+            }
+        } catch (error) {
+            alert(`❌ Import failed: ${error.message}`)
+            console.error('Import error:', error)
+        }
+    }
+
+    readFileAsText(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader()
+            reader.onload = (e) => resolve(e.target.result)
+            reader.onerror = (e) => reject(new Error('Failed to read file'))
+            reader.readAsText(file)
+        })
+    }
 }
 
 // Global functions for onclick handlers
@@ -596,6 +656,21 @@ function toggleReveal() {
 
 function resetGame() {
     app.resetGame()
+}
+
+function exportGameData() {
+    app.exportGameData()
+}
+
+function handleFileImport(event) {
+    const file = event.target.files[0]
+    if (file && file.type === 'application/json') {
+        app.importGameData(file)
+    } else {
+        alert('Please select a valid JSON file')
+    }
+    // Reset file input
+    event.target.value = ''
 }
 
 // Initialize app when page loads
