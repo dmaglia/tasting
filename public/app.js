@@ -2,6 +2,7 @@ class ChipsTastingApp {
     constructor() {
         this.socket = io()
         this.username = ''
+        this.userId = ''
         this.gameData = {chips: [], votes: {}}
         this.config = {}
         this.chart = null
@@ -17,7 +18,7 @@ class ChipsTastingApp {
     setupSocketListeners() {
         this.socket.on('connect', () => {
             this.updateConnectionStatus(true)
-            if (this.username) this.socket.emit('joinGame', this.username)
+            if (this.userId) this.socket.emit('joinGame', this.userId)
         })
 
         this.socket.on('disconnect', () => this.updateConnectionStatus(false))
@@ -158,7 +159,7 @@ class ChipsTastingApp {
     loadUserSession() {
         const savedUser = localStorage.getItem('chips-tasting-user')
         if (savedUser) {
-            this.username = savedUser
+            this.userId = savedUser
             this.showGameInterface()
         }
         this.updateLeaderboardAccess()
@@ -187,14 +188,17 @@ class ChipsTastingApp {
         }
 
         this.username = username
-        localStorage.setItem('chips-tasting-user', username)
-        this.socket.emit('joinGame', username)
+        this.userId = username + Date.now().toString() // ensure multiple users can have the same name
+
+        localStorage.setItem('chips-tasting-user', this.userId)
+        this.socket.emit('joinGame', this.userId)
         this.showGameInterface()
     }
 
     logout() {
         if (confirm('Are you sure you want to switch users? Your session will be cleared.')) {
             localStorage.removeItem('chips-tasting-user')
+            this.userId = ''
             this.username = ''
             this.isAdmin = false
 
@@ -392,7 +396,7 @@ class ChipsTastingApp {
     }
 
     hasUserVotedForChip(chip) {
-        const userVotes = this.gameData.votes[this.username]?.[chip]
+        const userVotes = this.gameData.votes[this.userId]?.[chip]
         if (!userVotes) return false
 
         const criteria = this.config.criteria || [{key: 'taste'}, {key: 'appearance'}, {key: 'mouthfeel'}]
@@ -443,12 +447,12 @@ class ChipsTastingApp {
     }
 
     getUserVote(chip, criterion) {
-        return this.gameData.votes[this.username]?.[chip]?.[criterion] || 0
+        return this.gameData.votes[this.userId]?.[chip]?.[criterion] || 0
     }
 
     submitVote(chip, criterion, rating) {
         this.socket.emit('submitVote', {
-            username: this.username,
+            username: this.userId,
             chip,
             criterion,
             rating
@@ -567,7 +571,7 @@ class ChipsTastingApp {
 
     calculatePersonalScores() {
         const personalScores = {}
-        const userVotes = this.gameData.votes[this.username] || {}
+        const userVotes = this.gameData.votes[this.userId] || {}
         const criteria = this.config.criteria || [
             {key: 'taste'},
             {key: 'appearance'},
