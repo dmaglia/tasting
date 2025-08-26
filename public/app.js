@@ -534,8 +534,8 @@ class ChipsTastingApp {
                 datasets: [{
                     label: 'Overall Rating',
                     data: data.map(d => d.overall),
-                    backgroundColor: '#dc2626',
-                    borderColor: '#b91c1c',
+                    backgroundColor: '#fbbf24',
+                    borderColor: '#fbbf24',
                     borderWidth: 1,
                     borderRadius: 8
                 }]
@@ -612,8 +612,8 @@ class ChipsTastingApp {
                 datasets: [{
                     label: 'Your Rating',
                     data: data.map(d => d.overall),
-                    backgroundColor: '#7c3aed',
-                    borderColor: '#6d28d9',
+                    backgroundColor: '#fbbf24',
+                    borderColor: '#fbbf24',
                     borderWidth: 1,
                     borderRadius: 8
                 }]
