@@ -113,10 +113,13 @@ class ChipsTastingApp {
                 emoji = isPersonal ? criterion.emoji : ranking?.emoji || criterion.emoji
             }
 
+            const titleId = isPersonal ? `${prefix}${capitalKey}Title` : `${key}Title`
+            const rankingId = isPersonal ? `${prefix}${capitalKey}Ranking` : `${key}Ranking`
+
             return `
                 <div class="ranking-card">
-                    <h3 id="${prefix}${capitalKey}Title">${emoji} ${title}</h3>
-                    <div id="${prefix}${capitalKey}Ranking"></div>
+                    <h3 id="${titleId}">${emoji} ${title}</h3>
+                    <div id="${rankingId}"></div>
                 </div>
             `
         }
