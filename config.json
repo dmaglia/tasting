@@ -3,7 +3,8 @@
     "title": "Chocolate Excellence",
     "subtitle": "Premium Chocolate Tasting",
     "description": "Join us for an exclusive blind chocolate tasting experience!",
-    "callToAction": "Rate each mystery chocolate and help us discover the ultimate indulgence"
+    "callToAction": "Rate each mystery chocolate and help us discover the ultimate indulgence",
+    "alwaysShowSampleNames": true
   },
   "product": {
     "name": "chocolate",

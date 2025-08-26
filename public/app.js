@@ -8,7 +8,8 @@ class ChipsTastingApp {
         this.chart = null
         this.personalChart = null
         this.isAdmin = false
-        this.revealMode = false
+        this.revealMode = false // reveals sample names and leaderboard
+        this.alwaysShowSampleNames = false // overrides revealMode
 
         this.loadUserSession()
         this.setupSocketListeners()
@@ -59,6 +60,8 @@ class ChipsTastingApp {
 
     updateUIFromConfig() {
         if (!this.config.event) return
+
+        this.alwaysShowSampleNames = this.config.event.alwaysShowSampleNames
 
         const updates = {
             'pageTitle': `${this.config.event.title} ${this.config.event.subtitle}`,
@@ -353,7 +356,7 @@ class ChipsTastingApp {
         }
 
         container.innerHTML = `
-            <h5>Current Chips:</h5>
+            <h5>Current Samples:</h5>
             ${this.gameData.chips.map(chip => `
                 <div class="chip-item">
                     <span class="chip-item-name">${chip}</span>
@@ -367,7 +370,7 @@ class ChipsTastingApp {
         if (this.isAdmin && document.querySelector('.admin-panel-content')?.style.display !== 'none') {
             return chip
         }
-        return this.revealMode ? chip : `Sample #${index + 1}`
+        return this.revealMode || this.alwaysShowSampleNames ? chip : `Sample #${index + 1}`
     }
 
     renderChips() {
