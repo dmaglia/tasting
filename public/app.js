@@ -291,18 +291,18 @@ class ChipsTastingApp {
 
     addChip() {
         if (!this.isAdmin) {
-            alert('Only admins can add new chip samples')
+            alert('Only admins can add new samples')
             return
         }
 
         const chipName = document.getElementById('newChipInput').value.trim()
         if (chipName.length < 2) {
-            alert('Please enter a chip name with at least 2 characters')
+            alert('Please enter a sample name with at least 2 characters')
             return
         }
 
         if (this.gameData.chips.includes(chipName)) {
-            alert('This chip flavor already exists!')
+            alert('This sample already exists!')
             return
         }
 
@@ -312,11 +312,11 @@ class ChipsTastingApp {
 
     removeChip(chipName) {
         if (!this.isAdmin) {
-            alert('Only admins can remove chip samples')
+            alert('Only admins can remove samples')
             return
         }
 
-        if (confirm(`Are you sure you want to remove "${chipName}"? This will also delete all votes for this chip.`)) {
+        if (confirm(`Are you sure you want to remove "${chipName}"? This will also delete all votes for this sample.`)) {
             this.socket.emit('removeChip', chipName)
         }
     }
@@ -557,7 +557,7 @@ class ChipsTastingApp {
                     legend: {display: false},
                     title: {
                         display: true,
-                        text: 'Overall Chip Rankings',
+                        text: 'Overall Rankings',
                         font: {size: 16, weight: 'bold'}
                     }
                 },
@@ -704,7 +704,7 @@ class ChipsTastingApp {
             return
         }
 
-        if (confirm('Are you sure you want to reset all data? This will clear all votes and chip samples. This cannot be undone!')) {
+        if (confirm('Are you sure you want to reset all data? This will clear all votes and samples. This cannot be undone!')) {
             this.socket.emit('adminReset')
         }
     }
@@ -720,7 +720,7 @@ class ChipsTastingApp {
 
         const link = document.createElement('a')
         link.href = `/api/backup?admin=${encodeURIComponent(adminSecret)}`
-        link.download = `chips-tasting-backup-${new Date().toISOString().split('T')[0]}.json`
+        link.download = `tasting-backup-${new Date().toISOString().split('T')[0]}.json`
         document.body.appendChild(link)
         link.click()
         document.body.removeChild(link)
@@ -751,7 +751,7 @@ class ChipsTastingApp {
             const result = await response.json()
 
             if (response.ok) {
-                alert(`✅ Import successful!\n\nImported:\n• ${result.stats.chips} chip samples\n• ${result.stats.users} users with votes\n• Reveal mode: ${result.stats.revealMode ? 'ON' : 'OFF'}`)
+                alert(`✅ Import successful!\n\nImported:\n• ${result.stats.chips} samples\n• ${result.stats.users} users with votes\n• Reveal mode: ${result.stats.revealMode ? 'ON' : 'OFF'}`)
             } else {
                 alert(`❌ Import failed: ${result.error}`)
             }
